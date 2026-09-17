@@ -10,18 +10,69 @@
 | Custom domain didaftarkan di GitHub | ✅ Selesai |
 | Build GitHub Pages | ✅ Berhasil (`built`, tanpa error) |
 | Konten terverifikasi ter-deploy | ✅ Selesai (semua halaman 200) |
-| **Record DNS di panel Sumopod** | ⛔ **BELUM — ini tugas Anda** |
-| Enforce HTTPS | ⏳ Menunggu DNS selesai |
+| DNS apex — 4 record `A` + 4 record `AAAA` | ✅ Selesai & sudah tersebar |
+| **DNS `www` — record `CNAME`** | ⛔ **BELUM — ini tugas Anda** |
+| **Sertifikat HTTPS** | ⏳ Sedang diproses GitHub (maks. 24 jam) |
+| Enforce HTTPS | ⏳ Menunggu sertifikat terbit |
+
+**Hasil pengecekan terakhir (health check GitHub):**
+
+```
+apex  indonesiakompeten.web.id
+  dns_resolves            : true
+  is_pointed_to_gh_pages  : true
+  is_served_by_pages      : true
+  is_https_eligible       : true
+  caa_error               : null        (tidak ada CAA yang menghalangi)
+  responds_to_https       : false       <-- sertifikat belum terbit
+
+www   www.indonesiakompeten.web.id
+  dns_resolves            : false       <-- record CNAME belum dibuat
+  reason                  : Domain's DNS record could not be retrieved
+```
 
 ---
 
 ## 🔴 Yang Perlu Anda Lakukan Sekarang
 
-Hanya **satu hal** yang tersisa: menambahkan record DNS di panel Sumopod.
-Semua sisanya sudah beres. Lihat **Bagian B2** untuk tabel record yang harus
-dibuat, lalu **Bagian C3** untuk mengaktifkan HTTPS.
+### 1. Tambahkan record `www` (belum ada)
 
-Perkiraan waktu: 5 menit pengaturan, 10 menit–24 jam propagasi.
+Apex domain sudah benar, tetapi `www` belum punya record. Buka panel DNS
+Sumopod, tambahkan **satu** record berikut:
+
+| Jenis | Nama | Nilai |
+|---|---|---|
+| CNAME | `www` | `muhrafihdr.github.io` |
+
+Tanpa record ini, `www.indonesiakompeten.web.id` tidak bisa dibuka dan
+redirect otomatis `www` → domain utama tidak akan berjalan.
+
+### 2. Tunggu sertifikat HTTPS, lalu aktifkan Enforce HTTPS
+
+Saat ini nama domain Anda masih menyajikan sertifikat `*.github.io`, sehingga
+`https://indonesiakompeten.web.id` belum bisa dibuka (sementara `http://`
+sudah normal). GitHub sedang memproses penerbitan sertifikat Let's Encrypt —
+biasanya 15–60 menit setelah DNS benar, maksimal 24 jam.
+
+Setelah sertifikat terbit, aktifkan HTTPS:
+
+1. Repository → **Settings** → **Pages**
+2. Centang **Enforce HTTPS**
+
+Untuk memeriksa statusnya kapan saja:
+
+```bash
+# Buka https://github.com/muhrafihdr/indonesiakompeten/settings/pages
+# — atau lewat API:
+gh api repos/muhrafihdr/indonesiakompeten/pages -q '.https_enforced'
+
+# Cek sertifikat yang sedang disajikan
+curl -sI https://indonesiakompeten.web.id/ | head -3
+```
+
+### 3. (Disarankan) Verifikasi kepemilikan domain
+
+Lihat **Bagian C2** — mencegah orang lain memakai domain Anda di GitHub Pages.
 
 ---
 

@@ -10,69 +10,70 @@
 | Custom domain didaftarkan di GitHub | ✅ Selesai |
 | Build GitHub Pages | ✅ Berhasil (`built`, tanpa error) |
 | Konten terverifikasi ter-deploy | ✅ Selesai (semua halaman 200) |
-| DNS apex — 4 record `A` + 4 record `AAAA` | ✅ Selesai & sudah tersebar |
-| **DNS `www` — record `CNAME`** | ⛔ **BELUM — ini tugas Anda** |
-| **Sertifikat HTTPS** | ⏳ Sedang diproses GitHub (maks. 24 jam) |
-| Enforce HTTPS | ⏳ Menunggu sertifikat terbit |
+| DNS apex — 4 record `A` + 4 record `AAAA` | ✅ Selesai |
+| DNS `www` — record `CNAME` | ✅ Selesai |
+| Sertifikat HTTPS (Let's Encrypt) | ✅ Terbit |
+| Enforce HTTPS | ✅ Aktif |
+| Redirect `http` → `https` & `www` → apex | ✅ Berfungsi |
+| **Verifikasi kepemilikan domain (record TXT)** | ⛔ **Belum — disarankan** |
 
-**Hasil pengecekan terakhir (health check GitHub):**
+**Bukti verifikasi akhir:**
 
 ```
-apex  indonesiakompeten.web.id
-  dns_resolves            : true
-  is_pointed_to_gh_pages  : true
-  is_served_by_pages      : true
-  is_https_eligible       : true
-  caa_error               : null        (tidak ada CAA yang menghalangi)
-  responds_to_https       : false       <-- sertifikat belum terbit
+SERTIFIKAT
+  subject  : /CN=indonesiakompeten.web.id
+  issuer   : /C=US/O=Let's Encrypt/CN=YR1
+  SAN      : DNS:indonesiakompeten.web.id, DNS:www.indonesiakompeten.web.id
+  berlaku  : 17 Sep 2026  ->  16 Des 2026   (diperbarui otomatis)
 
-www   www.indonesiakompeten.web.id
-  dns_resolves            : false       <-- record CNAME belum dibuat
-  reason                  : Domain's DNS record could not be retrieved
+REDIRECT (semua menuju kanonik https://indonesiakompeten.web.id/)
+  http://indonesiakompeten.web.id/       301  ->  https://indonesiakompeten.web.id/
+  http://www.indonesiakompeten.web.id/   301  ->  https://indonesiakompeten.web.id/
+  https://www.indonesiakompeten.web.id/  301  ->  https://indonesiakompeten.web.id/
+
+SEMUA HALAMAN VIA HTTPS: 200 OK
+  /  tentang.html  layanan.html  alur.html  faq.html  kontak.html
+  sitemap.xml  robots.txt
 ```
+
+> **Catatan proses:** sertifikat awalnya tidak terbit karena pemeriksaan DNS
+> pertama GitHub dijalankan *sebelum* DNS aktif, sehingga gagal dan tidak
+> diulang. Perbaikan sesuai dokumentasi GitHub: hapus custom domain lalu
+> daftarkan ulang untuk merestart proses penerbitan. Setelah itu sertifikat
+> terbit dalam waktu sekitar satu menit.
 
 ---
 
-## 🔴 Yang Perlu Anda Lakukan Sekarang
+## 🔴 Satu Hal yang Disarankan: Verifikasi Kepemilikan Domain
 
-### 1. Tambahkan record `www` (belum ada)
+Website **sudah berjalan penuh**, tetapi status domain di GitHub masih
+`unverified`. Ini bukan penghalang fungsi, melainkan soal keamanan: bila suatu
+saat GitHub Pages dinonaktifkan, domain Anda berisiko diambil alih orang lain.
 
-Apex domain sudah benar, tetapi `www` belum punya record. Buka panel DNS
-Sumopod, tambahkan **satu** record berikut:
+### 1. Tambahkan record TXT berikut di panel DNS Sumopod
 
-| Jenis | Nama | Nilai |
+| Jenis | Nama / Host | Nilai |
 |---|---|---|
-| CNAME | `www` | `muhrafihdr.github.io` |
+| `TXT` | `_github-pages-challenge-muhrafihdr` | `a23db9dc0f98e448c6f99c375561c7` |
 
-Tanpa record ini, `www.indonesiakompeten.web.id` tidak bisa dibuka dan
-redirect otomatis `www` → domain utama tidak akan berjalan.
+- Kolom **Nama/Host** cukup diisi `_github-pages-challenge-muhrafihdr`
+  (panel akan menambahkan `.indonesiakompeten.web.id` otomatis).
+- Bila panel meminta nama lengkap, isi:
+  `_github-pages-challenge-muhrafihdr.indonesiakompeten.web.id`
+- **Nilai:** `a23db9dc0f98e448c6f99c375561c7` (tanpa tanda kutip)
 
-### 2. Tunggu sertifikat HTTPS, lalu aktifkan Enforce HTTPS
+### 2. Klik Verify di GitHub
 
-Saat ini nama domain Anda masih menyajikan sertifikat `*.github.io`, sehingga
-`https://indonesiakompeten.web.id` belum bisa dibuka (sementara `http://`
-sudah normal). GitHub sedang memproses penerbitan sertifikat Let's Encrypt —
-biasanya 15–60 menit setelah DNS benar, maksimal 24 jam.
+Buka **https://github.com/settings/pages** → **Add a domain** → isi
+`indonesiakompeten.web.id` → **Verify**. Tunggu 5–30 menit setelah record TXT
+ditambahkan agar DNS tersebar lebih dulu.
 
-Setelah sertifikat terbit, aktifkan HTTPS:
-
-1. Repository → **Settings** → **Pages**
-2. Centang **Enforce HTTPS**
-
-Untuk memeriksa statusnya kapan saja:
+### 3. Periksa hasilnya
 
 ```bash
-# Buka https://github.com/muhrafihdr/indonesiakompeten/settings/pages
-# — atau lewat API:
-gh api repos/muhrafihdr/indonesiakompeten/pages -q '.https_enforced'
-
-# Cek sertifikat yang sedang disajikan
-curl -sI https://indonesiakompeten.web.id/ | head -3
+dig +short TXT _github-pages-challenge-muhrafihdr.indonesiakompeten.web.id @8.8.8.8
+# harus menampilkan: "a23db9dc0f98e448c6f99c375561c7"
 ```
-
-### 3. (Disarankan) Verifikasi kepemilikan domain
-
-Lihat **Bagian C2** — mencegah orang lain memakai domain Anda di GitHub Pages.
 
 ---
 
@@ -295,6 +296,8 @@ Lakukan pengecekan berikut pada hari pertama:
 | "InvalidDNSError" | Record CNAME salah arah. Pastikan ke `muhrafihdr.github.io` tanpa nama repo. |
 | Situs tampil tetapi tanpa gaya (CSS) | Pastikan folder `assets/` ikut terunggah dan huruf besar/kecil nama berkas sama persis. |
 | HTTPS tidak bisa dicentang | Tunggu sertifikat terbit (maks. 24 jam). Pastikan DNS di Cloudflare tidak di-proxy. |
+| Sertifikat lama tidak kunjung terbit padahal DNS sudah benar | Pemeriksaan DNS pertama GitHub berjalan sebelum DNS aktif. **Solusi resmi:** Settings → Pages → klik **Remove** pada custom domain, ketik ulang `indonesiakompeten.web.id`, lalu **Save**. Sertifikat biasanya terbit dalam 1 menit. (Ini yang akhirnya berhasil pada 17 Sep 2026.) |
+| `https://` menampilkan peringatan "not secure" | Cek sertifikat dengan `echo \| openssl s_client -servername indonesiakompeten.web.id -connect 185.199.108.153:443 2>/dev/null \| openssl x509 -noout -subject`. Harus `/CN=indonesiakompeten.web.id`, bukan `*.github.io`. |
 | "Domain is already taken" | Domain masih terpasang di repository lain. Hapus dari sana, atau verifikasi kepemilikan domain (bagian C2). |
 | Halaman 404 tampil untuk semua tautan | Cek `.nojekyll` ada di root, dan pastikan Pages di-deploy dari `/ (root)`. |
 | Perubahan tidak muncul | Tunggu 1–2 menit, lalu lakukan *hard refresh* (Ctrl/Cmd + Shift + R). |

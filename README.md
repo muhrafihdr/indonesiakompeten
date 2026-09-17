@@ -115,17 +115,20 @@ Formulir di `kontak.html` bekerja **tanpa server** dengan dua pilihan:
 
 ## 5. Publikasi ke GitHub Pages
 
-Panduan langkah demi langkah, termasuk pengaturan DNS untuk
-`indonesiakompeten.web.id`, ada di **[PANDUAN-DEPLOY.md](PANDUAN-DEPLOY.md)**.
+> **Status: sudah LIVE.** Website aktif penuh di **https://indonesiakompeten.web.id**
+> dengan HTTPS, redirect `www` → domain utama, dan redirect `http` → `https`.
+> Rincian lengkap ada di **[PANDUAN-DEPLOY.md](PANDUAN-DEPLOY.md)**.
 
-Ringkasnya:
+Langkah yang sudah dikerjakan:
 
-1. Unggah seluruh berkas ke branch `main`.
-2. GitHub → **Settings → Pages**.
-3. Source: **Deploy from a branch** → Branch: **main** → Folder: **/ (root)**.
-4. Isi **Custom domain**: `indonesiakompeten.web.id`, lalu **Save**.
-5. Atur DNS di penyedia domain (4 record `A` + 1 record `CNAME`).
-6. Aktifkan **Enforce HTTPS**.
+1. ✅ Unggah seluruh berkas ke branch `main`.
+2. ✅ GitHub → **Settings → Pages** — Source: **Deploy from a branch** → `main` → `/ (root)`.
+3. ✅ Isi **Custom domain**: `indonesiakompeten.web.id`.
+4. ✅ Atur DNS di panel Sumopod (4 record `A`, 4 record `AAAA`, 1 record `CNAME` untuk `www`).
+5. ✅ Aktifkan **Enforce HTTPS**.
+
+Yang masih disarankan: **verifikasi kepemilikan domain** dengan record `TXT`
+(lihat PANDUAN-DEPLOY.md → bagian verifikasi domain).
 
 ---
 

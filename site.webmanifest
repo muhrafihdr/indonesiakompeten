@@ -1,0 +1,19 @@
+{
+  "name": "Indonesia Kompeten — Lembaga Sertifikasi Profesi",
+  "short_name": "Indonesia Kompeten",
+  "description": "Lembaga sertifikasi profesi yang membantu tenaga kerja Indonesia membuktikan kompetensi melalui asesmen yang valid, reliabel, fleksibel, dan adil.",
+  "lang": "id",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0B2A4A",
+  "icons": [
+    {
+      "src": "/assets/img/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

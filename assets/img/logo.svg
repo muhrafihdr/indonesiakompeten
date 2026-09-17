@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="Logo Indonesia Kompeten">
+  <defs>
+    <linearGradient id="ikShield" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2E7BF6"/>
+      <stop offset="0.55" stop-color="#1565D8"/>
+      <stop offset="1" stop-color="#0B2A4A"/>
+    </linearGradient>
+    <linearGradient id="ikCheck" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#D6E7FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Perisai -->
+  <path d="M24 2.5 42.5 9.6v14.1c0 10.9-7.4 18.9-18.5 21.8C12.9 42.6 5.5 34.6 5.5 23.7V9.6Z"
+        fill="url(#ikShield)"/>
+
+  <!-- Aksen emas -->
+  <path d="M24 2.5 42.5 9.6v3.1L24 5.8 5.5 12.7V9.6Z" fill="#F2A93B" opacity=".95"/>
+
+  <!-- Centang kompeten -->
+  <path d="m15.4 24.1 5.9 5.9L33 17.3"
+        fill="none" stroke="url(#ikCheck)" stroke-width="4.4"
+        stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Garis aksen merah -->
+  <path d="M5.5 23.7c0 10.9 7.4 18.9 18.5 21.8"
+        fill="none" stroke="#E63946" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>
+</svg>

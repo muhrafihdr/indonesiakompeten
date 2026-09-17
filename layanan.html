@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Skema &amp; Layanan Sertifikasi — Indonesia Kompeten</title>
+<meta name="description" content="Daftar skema sertifikasi kompetensi dan layanan Indonesia Kompeten: sertifikasi profesi, asesmen mandiri, Tempat Uji Kompetensi (TUK), dan pelatihan asesor.">
+<link rel="canonical" href="https://indonesiakompeten.web.id/layanan.html">
+<meta name="theme-color" content="#0B2A4A">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Indonesia Kompeten">
+<meta property="og:locale" content="id_ID">
+<meta property="og:title" content="Skema &amp; Layanan Sertifikasi — Indonesia Kompeten">
+<meta property="og:description" content="Pilih skema sertifikasi sesuai bidang Anda dan kenali layanan kami.">
+<meta property="og:url" content="https://indonesiakompeten.web.id/layanan.html">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/img/favicon.svg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+
+<style>
+  /* Gaya khusus penyaring skema */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 34px;
+  }
+  .filter-btn {
+    font: inherit;
+    font-size: .9rem;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    color: var(--navy-800);
+    cursor: pointer;
+    transition: all .18s ease;
+  }
+  .filter-btn:hover { border-color: var(--blue-500); color: var(--blue-600); }
+  .filter-btn.is-active {
+    background: linear-gradient(120deg, var(--blue-600), var(--blue-500));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 10px 22px -12px rgba(21, 101, 216, .9);
+  }
+  .scheme-card[hidden] { display: none; }
+  .filter-empty {
+    display: none;
+    text-align: center;
+    color: var(--muted);
+    padding: 30px 0;
+  }
+  .filter-empty.is-shown { display: block; }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Lewati ke konten utama</a>
+
+<header class="site-header" id="siteHeader">
+  <div class="container header-inner">
+    <a class="brand" href="./" aria-label="Indonesia Kompeten, kembali ke beranda">
+      <img class="brand-mark" src="assets/img/logo.svg" alt="" width="42" height="42">
+      <span class="brand-text">
+        <strong>Indonesia Kompeten</strong>
+        <small>Lembaga Sertifikasi Profesi</small>
+      </span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="siteNav" aria-label="Buka menu navigasi"><span></span></button>
+    <nav class="site-nav" id="siteNav" aria-label="Navigasi utama">
+      <ul>
+        <li><a href="./">Beranda</a></li>
+        <li><a href="tentang.html">Tentang</a></li>
+        <li><a href="layanan.html">Skema &amp; Layanan</a></li>
+        <li><a href="alur.html">Alur Sertifikasi</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="kontak.html">Kontak</a></li>
+      </ul>
+      <div class="nav-cta"><a class="btn btn-primary btn-sm" href="kontak.html">Daftar Sertifikasi</a></div>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="page-hero">
+    <div class="container">
+      <ol class="breadcrumb">
+        <li><a href="./">Beranda</a></li>
+        <li>Skema &amp; Layanan</li>
+      </ol>
+      <h1>Skema &amp; Layanan</h1>
+      <p class="lead">
+        Temukan skema sertifikasi yang sesuai dengan pekerjaan Anda, lalu kenali
+        layanan pendukung yang tersedia.
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================== DAFTAR SKEMA ==================== -->
+  <section class="section" id="skema">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Skema Sertifikasi</span>
+        <h2>Daftar Skema</h2>
+        <p>
+          Gunakan tombol di bawah untuk menyaring skema berdasarkan bidang.
+          Hubungi kami untuk memastikan skema yang Anda pilih sudah tersedia.
+        </p>
+      </div>
+
+      <div class="filters" role="group" aria-label="Saring skema berdasarkan bidang">
+        <button class="filter-btn is-active" type="button" data-filter="all">Semua</button>
+        <button class="filter-btn" type="button" data-filter="adm">Administrasi</button>
+        <button class="filter-btn" type="button" data-filter="ti">Teknologi</button>
+        <button class="filter-btn" type="button" data-filter="jasa">Jasa &amp; Layanan</button>
+        <button class="filter-btn" type="button" data-filter="keu">Keuangan</button>
+        <button class="filter-btn" type="button" data-filter="bahasa">Bahasa</button>
+      </div>
+
+      <div class="grid grid--3" id="schemeGrid">
+
+        <article class="card scheme scheme-card reveal" data-cat="adm">
+          <div class="scheme-top">
+            <div class="card-icon card-icon--gold" style="margin:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/></svg>
+            </div>
+            <span class="tag tag--gold">Administrasi</span>
+          </div>
+          <h3>Administrasi Perkantoran</h3>
+          <p>Untuk staf administrasi dan pengelola dokumen kantor.</p>
+          <ul class="scheme-meta">
+            <li><span>Jenis</span><strong>Klaster</strong></li>
+            <li><span>Metode</span><strong>Tes tulis, wawancara, observasi</strong></li>
+            <li><span>Perkiraan durasi</span><strong>1 hari</strong></li>
+          </ul>
+        </article>
+
+        <article class="card scheme scheme-card reveal" data-cat="adm">
+          <div class="scheme-top">
+            <div class="card-icon card-icon--gold" style="margin:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 5V3h8v2"/><path d="M3 10h18"/></svg>
+            </div>
+            <span class="tag tag--gold">Administrasi</span>
+          </div>
+          <h3>Sekretaris Profesional</h3>
+          <p>Untuk sekretaris dan asisten pimpinan yang mengelola agenda serta korespondensi.</p>
+          <ul class="scheme-meta">
+            <li><span>Jenis</span><strong>Okupasi</strong></li>
+            <li><span>Metode</span><strong>Portofolio, wawancara</strong></li>
+            <li><span>Perkiraan durasi</span><strong>1–2 hari</strong></li>
+          </ul>
+        </article>
+
+        <article class="card scheme scheme-card reveal" data-cat="adm">
+          <div class="scheme-top">
+            <div class="card-icon card-icon--gold" style="margin:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h6l2 2h10v11H3Z"/><path d="M3 7V4h8l2 2"/></svg>
+            </div>
+            <span class="tag tag--gold">Administrasi</span>
+          </div>
+          <h3>Pengelolaan Kearsipan</h3>
+          <p>Untuk petugas arsip yang menangani penyimpanan dan penemuan kembali dokumen.</p>
+          <ul class="scheme-meta">
+            <li><span>Jenis</span><strong>Klaster</strong></li>
+            <li><span>Metode</span><strong>Praktik &amp; portofolio</strong></li>
+            <li><span>Perkiraan durasi</span><strong>1 hari</strong></li>
+          </ul>
+        </article>
+
+        <article class="card scheme scheme-card reveal" data-cat="ti">
+          <div class="scheme-top">
+            <div class="card-icon" style="margin:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <span class="tag">Teknologi</span>
+          </div>
+          <h3>Operator Komputer</h3>
+          <p>Untuk pengguna komputer yang bekerja dengan aplikasi perkantoran sehari-hari.</p>
+          <ul class="scheme-meta">
+            <li><span>Jenis</span><strong>Klaster</strong></li>
+            <li><span>Metode</span><strong>Praktik</strong></li>
+            <li><span>Perkiraan durasi</span><strong>1 hari</strong></li>
+          </ul>
+        </article>
+
+        <article class="card scheme scheme-card reveal" data-cat="ti">
+          <div class="scheme-top">
+            <div class="card-icon" style="margin:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="14" width="19" height="6" rx="2"/><path d="M6 14V8m12 6V8M9.5 8h5"/></svg>
+            </div>
+            <span class="tag">Teknologi</span>
+          </div>
+          <h3>Teknisi Jaringan Komputer</h3>
+          <p>Untuk teknisi yang memasang dan merawat jaringan komputer di kantor.</p>
+          <ul class="scheme-meta">
+            <li><span>Jenis</span><strong>Okupasi</strong></li>
+            <li><span>Metode</span><strong>Praktik &amp; observasi</strong></li>
+            <li><span>Perkiraan durasi</span><strong>1–2 hari</strong></li>
+          </ul>
+        </article>
+
+        <article class="card scheme scheme-card reveal" data-cat="ti">
+          <div class="scheme-top">
+            <div class="card-icon" style="margin:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v3a1 1 0 0 0 1 1h2l4 4V6L6 10H4a1 1 0 0 0-1 1Z"/><path d="M15 8.5a5 5 0 0 1 0 7"/><path d="M18 6a8.5 8.5 0 0 1 0 12"/></svg>
+            </div>
+            <span class="tag">Teknologi</span>
+          </div>
+          <h3>Pemasaran Digital</h3>
+          <p>Untuk pengelola media sosial, konten, dan kampanye pemasaran online.</p>
+          <ul class="scheme-meta">
+            <li><span>Jenis</span><strong>Okupasi</strong></li>
+            <li><span>Metode</span><strong>Portofolio &amp; praktik</strong></li>
+            <li><span>Perkiraan durasi</span><strong>1–2 hari</strong></li>
+          </ul>
+        </article>
+
+        <article class="card scheme scheme-card reveal" data-cat="jasa">
+          <div class="scheme-top">
+            <div class="card-icon card-icon--green" style="margin:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M6 20V10l6-4 6 4v10"/><path d="M10 20v-4h4v4"/></svg>
+            </div>
+            <span class="tag tag--green">Jasa &amp; Layanan</span>
+          </div>
+          <h3>Pelayanan Pelanggan</h3>
+          <p>Untuk petugas layanan, customer service, dan front office.</p>
+          <ul class="scheme-meta">
+            <li><span>Jenis</span><strong>Klaster</strong></li>
+            <li><span>Metode</span><strong>Simulasi &amp; wawancara</strong></li>
+            <li><span>Perkiraan durasi</span><strong>1 hari</strong></li>
+          </ul>
+        </article>
+
+        <article class="card scheme scheme-card reveal" data-cat="keu">
+          <div class="scheme-top">
+            <div class="card-icon card-icon--red" style="margin:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v12H4Z"/><circle cx="12" cy="12" r="3"/><path d="M7 9v6M17 9v6"/></svg>
+            </div>
+            <span class="tag tag--red">Keuangan</span>
+          </div>
+          <h3>Teknisi Akuntansi</h3>
+          <p>Untuk staf pembukuan yang mencatat transaksi dan menyusun laporan keuangan dasar.</p>
+          <ul class="scheme-meta">
+            <li><span>Jenis</span><strong>Okupasi</strong></li>
+            <li><span>Metode</span><strong>Tes tulis &amp; praktik</strong></li>
+            <li><span>Perkiraan durasi</span><strong>1–2 hari</strong></li>
+          </ul>
+        </article>
+
+        <article class="card scheme scheme-card reveal" data-cat="bahasa">
+          <div class="scheme-top">
+            <div class="card-icon" style="margin:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18Z"/></svg>
+            </div>
+            <span class="tag">Bahasa</span>
+          </div>
+          <h3>Komunikasi Bisnis Bahasa Inggris</h3>
+          <p>Untuk pekerja yang menggunakan bahasa Inggris dalam korespondensi dan rapat.</p>
+          <ul class="scheme-meta">
+            <li><span>Jenis</span><strong>Klaster</strong></li>
+            <li><span>Metode</span><strong>Tes lisan &amp; tulis</strong></li>
+            <li><span>Perkiraan durasi</span><strong>1 hari</strong></li>
+          </ul>
+        </article>
+
+      </div>
+
+      <p class="filter-empty" id="filterEmpty">Belum ada skema pada bidang ini.</p>
+
+      <div class="note note--warn reveal" style="max-width:860px;margin:34px auto 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4.5M12 17h.01"/><path d="M10.3 3.9 2.6 17.4A2 2 0 0 0 4.3 20.5h15.4a2 2 0 0 0 1.7-3.1L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+        <p>
+          <!-- CATATAN UNTUK PENGELOLA: sesuaikan daftar skema dengan skema yang benar-benar
+               sudah dilisensikan/dimiliki lembaga. Jangan mencantumkan skema yang belum tersedia. -->
+          Daftar di atas adalah contoh skema yang umum disertifikasi. Ketersediaan
+          skema dapat berbeda — silakan <a href="kontak.html">konfirmasi ke tim kami</a>
+          sebelum mendaftar.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== LAYANAN ==================== -->
+  <section class="section section--soft">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Layanan</span>
+        <h2>Layanan yang Kami Sediakan</h2>
+        <p>Selain sertifikasi, kami menyediakan layanan pendukung agar proses Anda berjalan lancar.</p>
+      </div>
+
+      <div class="grid grid--2">
+        <article class="card reveal" id="asesmen-mandiri">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7Z"/><path d="M14 3v5h5"/><path d="m9.5 14.5 2 2 4-4.5"/></svg>
+          </div>
+          <h3>Sertifikasi Kompetensi</h3>
+          <p>
+            Asesmen untuk menilai apakah Anda sudah kompeten pada satu skema tertentu.
+            Bila dinyatakan kompeten, Anda menerima sertifikat kompetensi.
+          </p>
+          <ul class="card-list">
+            <li>Asesmen berdasarkan bukti nyata pekerjaan Anda</li>
+            <li>Dilakukan oleh asesor yang sesuai bidang</li>
+            <li>Hasil disertai umpan balik yang jelas</li>
+          </ul>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-icon card-icon--gold">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4Z"/><path d="M8 9h8M8 13h5"/></svg>
+          </div>
+          <h3>Asesmen Mandiri</h3>
+          <p>
+            Anda memeriksa sendiri sejauh mana kemampuan Anda memenuhi unit
+            kompetensi. Ini membantu kami menentukan metode asesmen yang tepat.
+          </p>
+          <ul class="card-list">
+            <li>Formulir asesmen mandiri dibimbing oleh tim kami</li>
+            <li>Menjadi dasar penyusunan rencana asesmen</li>
+            <li>Tanpa biaya tambahan</li>
+          </ul>
+        </article>
+
+        <article class="card reveal" id="tuk">
+          <div class="card-icon card-icon--green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M10 21v-5h4v5"/></svg>
+          </div>
+          <h3>Tempat Uji Kompetensi (TUK)</h3>
+          <p>
+            Asesmen dilaksanakan di TUK dengan peralatan dan lingkungan kerja yang
+            sesuai, sehingga penilaian mencerminkan kondisi kerja sesungguhnya.
+          </p>
+          <ul class="card-list">
+            <li>TUK sewaktu, TUK mandiri, dan TUK tempat kerja</li>
+            <li>Peralatan disesuaikan dengan skema</li>
+            <li>Jadwal menyesuaikan ketersediaan Anda</li>
+          </ul>
+        </article>
+
+        <article class="card reveal" id="asesor">
+          <div class="card-icon card-icon--red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0 1 14 0"/><path d="M18.5 4.5 21 7l-3 3"/></svg>
+          </div>
+          <h3>Pelatihan &amp; Pengembangan Asesor</h3>
+          <p>
+            Program peningkatan kapasitas bagi calon asesor dan asesor aktif agar
+            menjaga mutu dan konsistensi penilaian.
+          </p>
+          <ul class="card-list">
+            <li>Materi prosedur asesmen dan pengumpulan bukti</li>
+            <li>Latihan praktik penilaian dan umpan balik</li>
+            <li>Informasi jadwal melalui kontak resmi</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PERSYARATAN ==================== -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Persiapan</span>
+        <h2>Persyaratan Umum Peserta</h2>
+        <p>Siapkan dokumen berikut agar proses pendaftaran Anda berjalan cepat.</p>
+      </div>
+
+      <div class="grid grid--2" style="max-width:900px;margin-inline:auto">
+        <article class="card reveal">
+          <h3>Dokumen Identitas</h3>
+          <ul class="card-list">
+            <li>Kartu Tanda Penduduk (KTP)</li>
+            <li>Kartu Keluarga (bila diperlukan)</li>
+            <li>Pas foto terbaru berlatar belakang merah atau biru</li>
+          </ul>
+        </article>
+
+        <article class="card reveal">
+          <h3>Dokumen Kompetensi</h3>
+          <ul class="card-list">
+            <li>Ijazah pendidikan terakhir</li>
+            <li>CV atau riwayat pekerjaan</li>
+            <li>Sertifikat pelatihan (bila ada)</li>
+            <li>Portofolio atau bukti pekerjaan (bila ada)</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="note reveal" style="max-width:900px;margin:26px auto 0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+        <p>
+          Persyaratan dapat berbeda untuk setiap skema. Tim kami akan mengirimkan
+          daftar persyaratan lengkap sesuai skema yang Anda pilih.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="cta reveal">
+        <h2>Sudah Menemukan Skema yang Cocok?</h2>
+        <p>Daftarkan diri Anda sekarang, atau tanyakan dulu bila masih ragu. Gratis untuk bertanya.</p>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="kontak.html">Daftar Sekarang</a>
+          <a class="btn btn-outline-light" href="alur.html">Lihat Alur Sertifikasi</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="./" aria-label="Indonesia Kompeten, kembali ke beranda">
+          <img class="brand-mark" src="assets/img/logo.svg" alt="" width="42" height="42">
+          <span class="brand-text">
+            <strong>Indonesia Kompeten</strong>
+            <small>Lembaga Sertifikasi Profesi</small>
+          </span>
+        </a>
+        <p>
+          Lembaga sertifikasi profesi yang membantu tenaga kerja Indonesia
+          membuktikan kompetensi melalui asesmen yang valid, reliabel, fleksibel,
+          dan adil.
+        </p>
+      </div>
+
+      <div>
+        <h4>Navigasi</h4>
+        <ul>
+          <li><a href="./">Beranda</a></li>
+          <li><a href="tentang.html">Tentang Kami</a></li>
+          <li><a href="layanan.html">Skema &amp; Layanan</a></li>
+          <li><a href="alur.html">Alur Sertifikasi</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Layanan</h4>
+        <ul>
+          <li><a href="layanan.html#skema">Sertifikasi Kompetensi</a></li>
+          <li><a href="layanan.html#asesmen-mandiri">Asesmen Mandiri</a></li>
+          <li><a href="layanan.html#tuk">Tempat Uji Kompetensi</a></li>
+          <li><a href="layanan.html#asesor">Pelatihan Asesor</a></li>
+          <li><a href="kontak.html">Pendaftaran</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Kontak</h4>
+        <ul>
+          <li>Gedung Indonesia Kompeten<br>Jl. [Nama Jalan] No. [Nomor], [Kota], [Provinsi] [Kode Pos]</li>
+          <li><a data-wa href="https://wa.me/6281234567890">WhatsApp: +62 812-3456-7890</a></li>
+          <li><a data-mailto="Pertanyaan Sertifikasi" href="mailto:info@indonesiakompeten.web.id">info@indonesiakompeten.web.id</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© <span data-year>2026</span> Indonesia Kompeten. Seluruh hak cipta dilindungi.</p>
+      <p>indonesiakompeten.web.id</p>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" type="button" aria-label="Kembali ke atas">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+<a class="wa-float" data-wa="Halo Indonesia Kompeten, saya ingin bertanya tentang skema sertifikasi." href="https://wa.me/6281234567890" aria-label="Hubungi kami melalui WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.4A10 10 0 1 0 12 2Zm5.3 14c-.2.6-1.2 1.2-1.7 1.2-.5.1-1 .1-1.7-.1a12 12 0 0 1-5.5-4.8c-.4-.7-.7-1.4-.7-2 0-.7.4-1.3.8-1.6.2-.2.4-.2.6-.2h.4c.2 0 .3.1.5.5l.6 1.4c.1.2.1.3 0 .5l-.3.4c-.1.2-.3.3-.1.6.5.8 1 1.4 1.7 1.9.3.2.5.3.7.1l.5-.6c.2-.2.3-.2.5-.1l1.4.7c.2.1.3.2.3.3v.8Z"/></svg>
+  <span>Chat WhatsApp</span>
+</a>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

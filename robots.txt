@@ -1,0 +1,10 @@
+# robots.txt — Indonesia Kompeten
+# https://indonesiakompeten.web.id
+
+User-agent: *
+Allow: /
+
+# Blokir berkas yang tidak perlu diindeks
+Disallow: /404.html
+
+Sitemap: https://indonesiakompeten.web.id/sitemap.xml

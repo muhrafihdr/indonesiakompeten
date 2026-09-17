@@ -1,5 +1,30 @@
 # Panduan Deploy — GitHub Pages + Domain indonesiakompeten.web.id
 
+## ✅ Status Saat Ini (sudah dikerjakan)
+
+| Langkah | Status |
+|---|---|
+| Website dibuat (6 halaman + 404) | ✅ Selesai |
+| Berkas di-commit & di-push ke branch `main` | ✅ Selesai |
+| GitHub Pages diaktifkan (source: `main` / root) | ✅ Selesai |
+| Custom domain didaftarkan di GitHub | ✅ Selesai |
+| Build GitHub Pages | ✅ Berhasil (`built`, tanpa error) |
+| Konten terverifikasi ter-deploy | ✅ Selesai (semua halaman 200) |
+| **Record DNS di panel Sumopod** | ⛔ **BELUM — ini tugas Anda** |
+| Enforce HTTPS | ⏳ Menunggu DNS selesai |
+
+---
+
+## 🔴 Yang Perlu Anda Lakukan Sekarang
+
+Hanya **satu hal** yang tersisa: menambahkan record DNS di panel Sumopod.
+Semua sisanya sudah beres. Lihat **Bagian B2** untuk tabel record yang harus
+dibuat, lalu **Bagian C3** untuk mengaktifkan HTTPS.
+
+Perkiraan waktu: 5 menit pengaturan, 10 menit–24 jam propagasi.
+
+---
+
 Panduan ini menjelaskan cara mempublikasikan website Indonesia Kompeten ke
 GitHub Pages dan menghubungkannya dengan domain **indonesiakompeten.web.id**.
 
@@ -63,8 +88,21 @@ itu normal. Lanjutkan ke langkah B2.
 
 ### B2. Atur DNS di penyedia domain
 
-Masuk ke panel DNS tempat domain `indonesiakompeten.web.id` didaftarkan
-(misalnya penyedia domain `.web.id`, Cloudflare, Niagahoster, Rumahweb, dsb).
+**Informasi domain Anda (hasil pengecekan):**
+
+| Item | Nilai |
+|---|---|
+| Registrar | PT Exabytes Network Indonesia — https://exabytes.co.id (pendaftaran: daftarnama.id) |
+| Nameserver | `NS1.SUMOPOD.COM`, `NS2.SUMOPOD.COM` |
+| Pengelola DNS | **Panel Sumopod** (karena nameserver mengarah ke Sumopod) |
+| Status domain | ACTIVE, berlaku sampai 17 September 2027 |
+| Kondisi saat ini | **Belum ada record A/AAAA/CNAME** — inilah sebabnya domain belum bisa dibuka |
+
+Jadi, record DNS harus ditambahkan di **panel kontrol Sumopod**. Bila Anda tidak
+memiliki aksesnya, hubungi tim Sumopod atau Exabytes dengan menyebutkan bahwa
+Anda ingin mengarahkan domain ke GitHub Pages.
+
+Setelah masuk ke panel DNS, ikuti tabel di bawah.
 
 **Hapus dulu** record `A` atau `CNAME` bawaan yang menunjuk ke parkir domain.
 
@@ -201,6 +239,7 @@ Lakukan pengecekan berikut pada hari pertama:
 
 | Gejala | Penyebab & solusi |
 |---|---|
+| Domain belum bisa dibuka sama sekali (NXDOMAIN) | Record A/AAAA belum dibuat di panel Sumopod. Lihat bagian B2. |
 | "Domain's DNS record could not be retrieved" | DNS belum menyebar. Tunggu 1–24 jam, cek dengan `dig`. |
 | "InvalidDNSError" | Record CNAME salah arah. Pastikan ke `muhrafihdr.github.io` tanpa nama repo. |
 | Situs tampil tetapi tanpa gaya (CSS) | Pastikan folder `assets/` ikut terunggah dan huruf besar/kecil nama berkas sama persis. |

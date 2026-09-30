@@ -182,6 +182,7 @@ const SITE = {
         `Nama       : ${get("nama")}`,
         `Email      : ${get("email")}`,
         `Telepon    : ${get("telepon")}`,
+        `Jenis      : ${get("jenis") || "-"}`,
         `Skema      : ${get("skema") || "-"}`,
         `Kebutuhan  : ${get("pesan") || "-"}`,
       ].join("\n");

@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20260930">
+<link rel="stylesheet" href="assets/css/style.css?v=20260930a">
 </head>
 <body>
 
@@ -165,9 +165,19 @@
           </div>
 
           <div class="field">
+            <label for="jenis">Jenis Sertifikasi <span aria-hidden="true">*</span></label>
+            <select id="jenis" name="jenis" required>
+              <option value="">Pilih jenis sertifikasi</option>
+              <option value="Sertifikasi BNSP">Sertifikasi BNSP</option>
+              <option value="Sertifikasi Non BNSP Lembaga Sertifikasi Profesi Terpercaya (Alfabank / Vico)">Sertifikasi Non BNSP Lembaga Sertifikasi Profesi Terpercaya (Alfabank / Vico)</option>
+            </select>
+            <span class="field-hint">Pilih BNSP atau Non BNSP (Alfabank / Vico).</span>
+          </div>
+
+          <div class="field">
             <label for="skema">Skema yang Diminati</label>
             <select id="skema" name="skema">
-              <option value="">Belum tahu, mohon rekomendasi</option>
+              <option value="">Pilih skema</option>
               <option value="Administrasi Perkantoran">Administrasi Perkantoran</option>
               <option value="Sekretaris Profesional">Sekretaris Profesional</option>
               <option value="Pengelolaan Kearsipan">Pengelolaan Kearsipan</option>
@@ -179,7 +189,7 @@
               <option value="Komunikasi Bisnis Bahasa Inggris">Komunikasi Bisnis Bahasa Inggris</option>
               <option value="Lainnya">Lainnya</option>
             </select>
-            <span class="field-hint">Belum yakin? Pilih "Belum tahu", kami akan membantu memilih.</span>
+            <span class="field-hint">Pilih skema yang paling sesuai. Belum yakin? Tanyakan lewat WhatsApp, kami bantu memilih.</span>
           </div>
 
           <div class="field">
@@ -281,6 +291,6 @@
   <span>Chat WhatsApp</span>
 </a>
 
-<script src="assets/js/main.js?v=20260930"></script>
+<script src="assets/js/main.js?v=20260930a"></script>
 </body>
 </html>

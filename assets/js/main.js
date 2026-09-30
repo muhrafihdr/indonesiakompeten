@@ -7,8 +7,8 @@
 
 const SITE = {
   // Nomor WhatsApp dengan kode negara, tanpa tanda "+" dan tanpa spasi.
-  // GANTI dengan nomor resmi lembaga, contoh: "6281234567890"
-  whatsapp: "6281234567890",
+  // Nomor resmi: 0877-0055-8300
+  whatsapp: "6287700558300",
 
   // Email resmi lembaga
   email: "info@indonesiakompeten.web.id",

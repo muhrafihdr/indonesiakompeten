@@ -1,6 +1,6 @@
-# Indonesia Kompeten — Website Lembaga Sertifikasi
+# Indonesia Kompeten — Portal Terintegrasi Wujudkan SDM Indonesia Kompeten
 
-Website resmi **Indonesia Kompeten**, lembaga sertifikasi profesi.
+Website resmi **Indonesia Kompeten**, portal terintegrasi untuk mewujudkan SDM Indonesia yang kompeten.
 Dibuat sebagai situs statis (HTML + CSS + JavaScript) tanpa proses build,
 sehingga dapat langsung di-hosting gratis di **GitHub Pages**.
 
@@ -64,19 +64,19 @@ Lalu buka http://localhost:8000
 
 Cari dan ganti semua teks di dalam tanda `[ ]`. Daftar lengkapnya:
 
-| Lokasi | Teks yang harus diganti |
+| Lokasi | Nilai saat ini / yang perlu diganti |
 |---|---|
-| `assets/js/main.js` (bagian `SITE`) | `whatsapp` — nomor WA, format `62812...` tanpa `+` dan tanpa spasi |
-| `assets/js/main.js` (bagian `SITE`) | `email` — alamat email resmi |
-| Semua halaman, bagian footer | `Jl. [Nama Jalan] No. [Nomor], [Kota], [Provinsi] [Kode Pos]` |
-| Semua halaman, bagian footer & kontak | Nomor telepon tampilan `+62 812-3456-7890` |
+| `assets/js/main.js` (bagian `SITE`) | `whatsapp: "6287700558300"` — nomor WA resmi (format `62...`, tanpa `+` dan tanpa spasi) |
+| `assets/js/main.js` (bagian `SITE`) | `email: "info@indonesiakompeten.web.id"` — ganti bila email berubah |
+| Semua halaman, bagian footer & kontak | Alamat: `Jl Wologito Setapak 78, Kembangarum, Semarang Barat 50148` |
+| Semua halaman, bagian footer & kontak | Nomor telepon tampilan `+62 877-0055-8300` |
 | `tentang.html` bagian **Legalitas** | Akta pendirian, SK Kemenkumham, NIB, NPWP, lisensi BNSP, ruang lingkup |
 | `layanan.html` | Pastikan daftar skema benar-benar tersedia/dilisensikan |
-| `kontak.html` | Alamat, jam layanan, peta Google Maps, nomor rekening resmi |
+| `kontak.html` | Jam layanan, peta Google Maps, nomor rekening resmi |
 
 > **Penting:** jangan mencantumkan nomor lisensi, akreditasi, atau skema yang
 > belum benar-benar dimiliki lembaga. Informasi yang tidak akurat pada situs
-> lembaga sertifikasi dapat menimbulkan masalah hukum.
+> lembaga/portal terintegrasi dapat menimbulkan masalah hukum.
 
 Ada juga komentar penanda `<!-- CATATAN PENGELOLA: ... -->` di dalam kode pada
 titik-titik yang perlu disesuaikan.

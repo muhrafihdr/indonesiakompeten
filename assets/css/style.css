@@ -337,11 +337,13 @@ p { margin: 0 0 1rem; }
 }
 
 .brand-text small {
-  font-size: .7rem;
+  font-size: .6rem;
   font-weight: 700;
-  letter-spacing: .09em;
+  letter-spacing: .04em;
   text-transform: uppercase;
   color: var(--blue-600);
+  max-width: 27ch;
+  line-height: 1.25;
 }
 
 .site-nav {
@@ -1270,7 +1272,7 @@ p { margin: 0 0 1rem; }
 
   .brand-mark { width: 38px; height: 38px; }
   .brand-text strong { font-size: 1rem; }
-  .brand-text small { font-size: .63rem; }
+  .brand-text small { font-size: .55rem; }
 }
 
 /* Cetak */

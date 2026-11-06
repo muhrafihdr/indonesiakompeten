@@ -22,6 +22,7 @@
   const STORAGE_KEY = "ik_cms_content_v1";
   const SESSION_KEY = "ik_sso_session_v1";
   const EDIT_KEY = "ik_sso_editmode_v1";
+  const VIEW_SITE_KEY = "ik_sso_view_site_v1";
   const GH_CFG_KEY = "ik_sso_github_cfg_v1";
   const GH_TOKEN_KEY = "ik_sso_gh_token";
   const FAIL_KEY = "ik_sso_fails";
@@ -58,6 +59,25 @@
     "faq.html",
     "kontak.html",
   ];
+
+  const TAB_INFO = {
+    content: {
+      title: "Dashboard Konten",
+      subtitle: "Kelola seluruh teks, gambar, tautan, dan elemen halaman aktif dari satu tempat.",
+    },
+    settings: {
+      title: "Pengaturan Website",
+      subtitle: "Atur identitas, kontak, SEO per halaman, dan warna utama website.",
+    },
+    publish: {
+      title: "Publikasi & Cadangan",
+      subtitle: "Terbitkan perubahan ke seluruh pengunjung atau unduh cadangan konten.",
+    },
+    help: {
+      title: "Panduan Panel Admin",
+      subtitle: "Petunjuk penggunaan dashboard, akses tersembunyi, dan catatan keamanan.",
+    },
+  };
 
   const TEXT_SKIP_TAGS = new Set([
     "SCRIPT", "STYLE", "NOSCRIPT", "TEMPLATE", "SVG", "PATH", "TITLE",
@@ -136,7 +156,6 @@
   let loginLockTimer = null;
   let textSearch = "";
   let submittingLogin = false;
-  let panelHideTimer = null;
   let mediaTarget = null;
   let linkTarget = null;
 
@@ -493,6 +512,10 @@
   function markDirty() {
     state.updatedAt = new Date().toISOString();
     isDirty = true;
+    hasLocal = true;
+    if (ui.dashboardChangeCount) {
+      ui.dashboardChangeCount.textContent = countChanges() + " perubahan";
+    }
     setSaveStatus("Menyimpan…", true);
     clearTimeout(saveTimer);
     saveTimer = setTimeout(persistState, 220);
@@ -990,7 +1013,6 @@
       openPanel();
       return;
     }
-    clearTimeout(panelHideTimer);
     ui.loginModal.hidden = false;
     void ui.loginModal.offsetWidth;
     ui.loginModal.classList.add("is-visible");
@@ -1027,14 +1049,15 @@
       if (safeEqual(hash, SSO_HASH)) {
         clearFailedLogin();
         setSession();
-        localStorage.setItem(EDIT_KEY, "1");
+        localStorage.setItem(EDIT_KEY, "0");
+        sessionStorage.removeItem(VIEW_SITE_KEY);
         ui.loginPass.value = "";
         ui.loginError.textContent = "";
         closeLogin();
+        exitEditMode({ silent: true });
         showAdminUI();
         openPanel("content");
-        enterEditMode();
-        toast("Login berhasil. Mode edit langsung aktif.", "success");
+        toast("Login berhasil. Anda masuk ke Dashboard Admin.", "success");
       } else {
         registerFailedLogin();
         ui.loginError.textContent = getLockRemaining() > 0
@@ -1046,7 +1069,7 @@
     } finally {
       submittingLogin = false;
       ui.loginSubmit.disabled = getLockRemaining() > 0;
-      ui.loginSubmit.textContent = "Masuk ke Panel";
+      ui.loginSubmit.textContent = "Masuk ke Dashboard";
     }
   }
 
@@ -1075,6 +1098,7 @@
     flushSave();
     clearSession();
     localStorage.removeItem(EDIT_KEY);
+    sessionStorage.removeItem(VIEW_SITE_KEY);
     sessionStorage.removeItem(GH_TOKEN_KEY);
     closePanel();
     exitEditMode({ silent: true });
@@ -1083,9 +1107,11 @@
   }
 
   function updateBar() {
-    if (!ui.barPage) return;
-    ui.barPage.textContent = getPageLabel();
+    if (ui.barPage) ui.barPage.textContent = getPageLabel();
     if (ui.panelPage) ui.panelPage.textContent = getPageLabel();
+    if (ui.dashboardChangeCount) {
+      ui.dashboardChangeCount.textContent = countChanges() + " perubahan";
+    }
     const status = ui.saveStatus;
     if (status && !isDirty) {
       status.textContent = hasLocal ? "Perubahan lokal aktif" : "Konten live";
@@ -1094,9 +1120,11 @@
   }
 
   function setSaveStatus(text, ok) {
-    if (!ui.saveStatus) return;
-    ui.saveStatus.textContent = text;
-    ui.saveStatus.dataset.state = ok ? "ok" : "error";
+    [ui.saveStatus, ui.dashboardStatus].forEach((element) => {
+      if (!element) return;
+      element.textContent = text;
+      element.dataset.state = ok ? "ok" : "error";
+    });
   }
 
   function updateEditButton() {
@@ -1112,21 +1140,27 @@
       return;
     }
     if (!ui.panel) return;
+    showAdminUI();
+    sessionStorage.removeItem(VIEW_SITE_KEY);
+    localStorage.setItem(EDIT_KEY, "0");
+    if (editing) exitEditMode({ silent: true });
     if (panelOpen && !ui.panel.hidden) {
       if (tab && tab !== activeTab) setTab(tab);
+      renderSidebarPages();
+      updateBar();
       return;
     }
-    clearTimeout(panelHideTimer);
     if (tab) activeTab = tab;
     ui.panel.hidden = false;
     panelOpen = true;
     document.body.classList.add("cms-panel-open");
     void ui.panel.offsetWidth;
     ui.panel.classList.add("is-open");
+    renderSidebarPages();
     renderActiveTab();
     updateBar();
     setTimeout(() => {
-      if (ui.panelClose) ui.panelClose.focus();
+      if (ui.panel) ui.panel.focus();
     }, 80);
   }
 
@@ -1135,8 +1169,22 @@
     panelOpen = false;
     document.body.classList.remove("cms-panel-open");
     ui.panel.classList.remove("is-open");
-    clearTimeout(panelHideTimer);
-    panelHideTimer = setTimeout(() => { if (ui.panel) ui.panel.hidden = true; }, 240);
+    ui.panel.hidden = true;
+  }
+
+  function leaveDashboard(editMode, options = {}) {
+    sessionStorage.setItem(VIEW_SITE_KEY, "1");
+    localStorage.setItem(EDIT_KEY, editMode ? "1" : "0");
+    if (!editMode) exitEditMode({ silent: true });
+    closePanel();
+    showAdminUI();
+    if (editMode) enterEditMode({ silent: options.silent === true });
+    if (options.silent) return;
+    if (editMode) {
+      toast("Mode edit langsung aktif. Klik teks atau gambar untuk mengubahnya.", "info");
+    } else {
+      toast("Menampilkan situs. Buka Dashboard dari bilah admin untuk kembali.", "info");
+    }
   }
 
   function setTab(tab) {
@@ -1154,10 +1202,22 @@
 
   function renderActiveTab() {
     if (!panelOpen) return;
+    updateDashboardMeta();
     if (activeTab === "content") renderContentTab();
     else if (activeTab === "settings") renderSettingsTab();
     else if (activeTab === "publish") renderPublishTab();
     else if (activeTab === "help") renderHelpTab();
+  }
+
+  function updateDashboardMeta() {
+    const info = TAB_INFO[activeTab] || TAB_INFO.content;
+    if (ui.dashboardTitle) ui.dashboardTitle.textContent = info.title;
+    if (ui.dashboardSubtitle) ui.dashboardSubtitle.textContent = info.subtitle;
+    if (ui.dashboardChangeCount) ui.dashboardChangeCount.textContent = countChanges() + " perubahan";
+    if (ui.dashboardStatus && !isDirty) {
+      ui.dashboardStatus.textContent = hasLocal ? "Perubahan lokal aktif" : "Konten live";
+      ui.dashboardStatus.dataset.state = "ok";
+    }
   }
 
   function toast(message, type = "info") {
@@ -1193,30 +1253,69 @@
         <span class="cms-bar-status" id="cmsSaveStatus" data-state="ok">Siap</span>
         <span class="cms-bar-spacer"></span>
         <button type="button" class="cms-bar-btn" id="cmsEditToggle" data-cms-action="toggle-edit" aria-pressed="false">Mode Edit: Nonaktif</button>
-        <button type="button" class="cms-bar-btn cms-bar-btn--primary" data-cms-action="open-panel">Panel</button>
+        <button type="button" class="cms-bar-btn cms-bar-btn--primary" data-cms-action="open-panel">Dashboard</button>
         <button type="button" class="cms-bar-btn cms-bar-btn--ghost" data-cms-action="logout">Keluar</button>
       </div>
 
-      <aside class="cms-panel" id="cmsPanel" aria-label="SSO Panel Admin" hidden>
-        <header class="cms-panel-head">
-          <div>
-            <p class="cms-panel-eyebrow">Akses Terbatas</p>
-            <h2>Panel Admin</h2>
-            <p class="cms-panel-page" id="cmsPanelPage">Halaman</p>
+      <aside class="cms-panel cms-dashboard" id="cmsPanel" tabindex="-1" aria-label="SSO Dashboard Admin" hidden>
+        <header class="cms-dashboard-head">
+          <div class="cms-dashboard-brand">
+            <span class="cms-dashboard-logo" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            </span>
+            <span class="cms-dashboard-brand-text">
+              <strong>Indonesia Kompeten</strong>
+              <small>SSO Panel Admin</small>
+            </span>
           </div>
-          <button type="button" class="cms-icon-btn" id="cmsPanelClose" aria-label="Tutup panel">×</button>
+          <div class="cms-dashboard-head-meta">
+            <span class="cms-dashboard-page" id="cmsPanelPage">Halaman</span>
+            <span class="cms-dashboard-save" id="cmsDashboardStatus" data-state="ok">Siap</span>
+          </div>
+          <div class="cms-dashboard-head-actions">
+            <button type="button" class="cms-btn cms-btn--ghost cms-btn--sm" data-cms-action="edit-site">Edit di Halaman</button>
+            <button type="button" class="cms-btn cms-btn--ghost cms-btn--sm" data-cms-action="view-site">Lihat Situs</button>
+            <button type="button" class="cms-btn cms-btn--danger-ghost cms-btn--sm" data-cms-action="logout">Keluar</button>
+            <button type="button" class="cms-icon-btn cms-dashboard-close" id="cmsPanelClose" aria-label="Tutup dashboard">×</button>
+          </div>
         </header>
-        <nav class="cms-tabs" role="tablist" aria-label="Menu Panel Admin">
-          <button type="button" role="tab" class="cms-tab is-active" data-cms-tab-button="content" aria-selected="true">Konten</button>
-          <button type="button" role="tab" class="cms-tab" data-cms-tab-button="settings" aria-selected="false">Pengaturan</button>
-          <button type="button" role="tab" class="cms-tab" data-cms-tab-button="publish" aria-selected="false">Publikasi</button>
-          <button type="button" role="tab" class="cms-tab" data-cms-tab-button="help" aria-selected="false">Bantuan</button>
-        </nav>
-        <div class="cms-panel-body" id="cmsPanelBody">
-          <section data-cms-tab="content"></section>
-          <section data-cms-tab="settings" hidden></section>
-          <section data-cms-tab="publish" hidden></section>
-          <section data-cms-tab="help" hidden></section>
+        <div class="cms-dashboard-body">
+          <aside class="cms-sidebar">
+            <div class="cms-sidebar-block">
+              <p class="cms-sidebar-label">Menu Dashboard</p>
+              <nav class="cms-tabs" role="tablist" aria-label="Menu Dashboard Admin">
+                <button type="button" role="tab" class="cms-tab is-active" data-cms-tab-button="content" aria-selected="true">Konten Website</button>
+                <button type="button" role="tab" class="cms-tab" data-cms-tab-button="settings" aria-selected="false">Pengaturan</button>
+                <button type="button" role="tab" class="cms-tab" data-cms-tab-button="publish" aria-selected="false">Publikasi</button>
+                <button type="button" role="tab" class="cms-tab" data-cms-tab-button="help" aria-selected="false">Bantuan</button>
+              </nav>
+            </div>
+            <div class="cms-sidebar-block">
+              <p class="cms-sidebar-label">Halaman Website</p>
+              <div class="cms-page-links" id="cmsSidebarPages"></div>
+            </div>
+            <div class="cms-sidebar-block cms-sidebar-block--bottom">
+              <p class="cms-sidebar-label">Sesi Admin</p>
+              <p class="cms-sidebar-hint">Login aktif. Semua perubahan disimpan otomatis di browser ini.</p>
+              <button type="button" class="cms-btn cms-btn--primary cms-btn--sm" data-cms-action="edit-site">Edit Langsung</button>
+            </div>
+          </aside>
+          <main class="cms-dashboard-main">
+            <div class="cms-dashboard-title">
+              <div>
+                <p class="cms-eyebrow">SSO Panel Admin</p>
+                <h1 id="cmsDashboardTitle" tabindex="-1">Dashboard Konten</h1>
+                <p id="cmsDashboardSubtitle">Kelola seluruh konten website dari satu tempat.</p>
+              </div>
+              <span class="cms-dashboard-badge" id="cmsDashboardChangeCount">0 perubahan</span>
+            </div>
+            <div class="cms-panel-body" id="cmsPanelBody">
+              <section data-cms-tab="content"></section>
+              <section data-cms-tab="settings" hidden></section>
+              <section data-cms-tab="publish" hidden></section>
+              <section data-cms-tab="help" hidden></section>
+            </div>
+          </main>
         </div>
       </aside>
 
@@ -1242,7 +1341,7 @@
               </span>
             </label>
             <p class="cms-error" id="cmsLoginError" role="alert"></p>
-            <button type="submit" class="cms-btn cms-btn--primary cms-btn--block" id="cmsLoginSubmit">Masuk ke Panel</button>
+            <button type="submit" class="cms-btn cms-btn--primary cms-btn--block" id="cmsLoginSubmit">Masuk ke Dashboard</button>
           </form>
           <p class="cms-login-foot">Akses tersembunyi • Sesi berakhir otomatis setelah 30 menit tidak aktif</p>
         </div>
@@ -1304,6 +1403,11 @@
     ui.panelPage = $("#cmsPanelPage", root);
     ui.panelClose = $("#cmsPanelClose", root);
     ui.panelBody = $("#cmsPanelBody", root);
+    ui.dashboardStatus = $("#cmsDashboardStatus", root);
+    ui.dashboardTitle = $("#cmsDashboardTitle", root);
+    ui.dashboardSubtitle = $("#cmsDashboardSubtitle", root);
+    ui.dashboardChangeCount = $("#cmsDashboardChangeCount", root);
+    ui.sidebarPages = $("#cmsSidebarPages", root);
     ui.loginModal = $("#cmsLoginModal", root);
     ui.loginForm = $("#cmsLoginForm", root);
     ui.loginUser = $("#cmsLoginUser", root);
@@ -1429,10 +1533,15 @@
 
   function pageLinksHtml() {
     const current = getPageId();
-    return `<div class="cms-page-links">` + PAGE_LINKS.map((page) => {
+    return PAGE_LINKS.map((page) => {
       const active = page === current ? " is-current" : "";
       return `<a class="cms-page-link${active}" href="${esc(pageHref(page))}?cms=panel" data-cms-page-link>${esc(PAGE_NAMES[page])}</a>`;
-    }).join("") + `</div>`;
+    }).join("");
+  }
+
+  function renderSidebarPages() {
+    if (!ui.sidebarPages) return;
+    ui.sidebarPages.innerHTML = pageLinksHtml();
   }
 
   function renderContentTab() {
@@ -1464,11 +1573,10 @@
 
     section.innerHTML = `
       <div class="cms-toolbar">
-        <button type="button" class="cms-btn cms-btn--primary cms-btn--sm" data-cms-action="toggle-edit" id="cmsContentEditToggle">${editing ? "Selesai Edit Langsung" : "Mulai Edit Langsung"}</button>
+        <button type="button" class="cms-btn cms-btn--primary cms-btn--sm" data-cms-action="edit-site">Edit di Halaman</button>
         <button type="button" class="cms-btn cms-btn--ghost cms-btn--sm" data-cms-action="refresh-fields">Segarkan Daftar</button>
         <button type="button" class="cms-btn cms-btn--danger-ghost cms-btn--sm" data-cms-action="reset-page">Reset Halaman Ini</button>
       </div>
-      ${pageLinksHtml()}
       <div class="cms-content-info">
         <span><strong>${textFields.length}</strong> teks</span>
         <span><strong>${attrFields.length}</strong> tautan/media</span>
@@ -1654,13 +1762,13 @@
     if (!section) return;
     section.innerHTML = `
       <div class="cms-card">
-        <h3>Cara Mengedit</h3>
+        <h3>Cara Menggunakan Dashboard</h3>
         <ol class="cms-list">
-          <li>Klik <strong>Mode Edit Langsung</strong> pada bilah admin atau tab Konten.</li>
-          <li>Klik teks mana pun di halaman, lalu ketik penggantinya. Perubahan langsung tampil.</li>
-          <li>Klik gambar untuk mengganti URL/alt atau mengunggah gambar baru.</li>
-          <li><kbd>Alt</kbd> + klik tautan untuk mengedit URL tujuan.</li>
-          <li>Gunakan tab <strong>Pengaturan</strong> untuk WhatsApp, email, SEO, dan warna.</li>
+          <li>Setelah login, Anda langsung masuk ke <strong>Dashboard Admin</strong>.</li>
+          <li>Gunakan menu di sidebar: <strong>Konten Website</strong>, <strong>Pengaturan</strong>, <strong>Publikasi</strong>, dan <strong>Bantuan</strong>.</li>
+          <li>Di tab Konten, edit teks melalui kolom yang tersedia atau klik <strong>Fokus</strong> untuk menyorot elemen di halaman.</li>
+          <li>Klik <strong>Edit di Halaman</strong> untuk menutup dashboard dan mengedit langsung di situs.</li>
+          <li>Klik <strong>Lihat Situs</strong> untuk melihat tampilan publik; buka kembali dashboard dari bilah admin di bawah.</li>
           <li>Buka <strong>Publikasi</strong> untuk mengirim perubahan ke seluruh pengunjung.</li>
         </ol>
       </div>
@@ -1752,24 +1860,33 @@
   }
 
   function focusField(key) {
-    if (!editing) enterEditMode({ silent: true });
-    const span = editingSpans.get(key);
-    if (span) {
-      span.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(() => {
-        span.focus();
-        caretToEnd(span);
-        span.classList.add("cms-flash");
-        setTimeout(() => span.classList.remove("cms-flash"), 1200);
-      }, 260);
-      return;
+    const fromDashboard = panelOpen;
+    if (fromDashboard) {
+      leaveDashboard(true, { silent: true });
+    } else if (!editing) {
+      enterEditMode({ silent: true });
     }
-    const field = collectTextFields({ includeWhitespace: true }).find((item) => item.key === key);
-    if (field) {
-      field.parent.scrollIntoView({ behavior: "smooth", block: "center" });
-      field.parent.classList.add("cms-flash");
-      setTimeout(() => field.parent.classList.remove("cms-flash"), 1200);
-    }
+    const reveal = () => {
+      const span = editingSpans.get(key);
+      if (span) {
+        span.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => {
+          span.focus();
+          caretToEnd(span);
+          span.classList.add("cms-flash");
+          setTimeout(() => span.classList.remove("cms-flash"), 1200);
+        }, 260);
+        return;
+      }
+      const field = collectTextFields({ includeWhitespace: true }).find((item) => item.key === key);
+      if (field) {
+        field.parent.scrollIntoView({ behavior: "smooth", block: "center" });
+        field.parent.classList.add("cms-flash");
+        setTimeout(() => field.parent.classList.remove("cms-flash"), 1200);
+      }
+    };
+    if (fromDashboard) setTimeout(reveal, 90);
+    else reveal();
   }
 
   function resetTextField(key) {
@@ -2048,7 +2165,7 @@
     });
 
     ui.linkForm.addEventListener("submit", handleLinkSubmit);
-    ui.panelClose.addEventListener("click", closePanel);
+    ui.panelClose.addEventListener("click", () => leaveDashboard(false));
 
     $$("[data-cms-tab-button]", ui.panel).forEach((button) => {
       button.addEventListener("click", () => setTab(button.dataset.cmsTabButton));
@@ -2081,6 +2198,9 @@
         else if (action === "reload-server") reloadServer();
         else if (action === "reset-local") resetLocal();
         else if (action === "publish-github") publishToGithub();
+        else if (action === "view-site") leaveDashboard(false);
+        else if (action === "edit-site") leaveDashboard(true);
+        else if (action === "logout") logout();
         return;
       }
       const pageLink = event.target.closest("[data-cms-page-link]");
@@ -2544,7 +2664,12 @@
   function restoreSessionUI() {
     if (!readSession()) return;
     showAdminUI();
-    if (localStorage.getItem(EDIT_KEY) === "1") enterEditMode({ silent: true });
+    const viewSite = sessionStorage.getItem(VIEW_SITE_KEY) === "1";
+    if (viewSite) {
+      if (localStorage.getItem(EDIT_KEY) === "1") enterEditMode({ silent: true });
+    } else {
+      openPanel("content");
+    }
   }
 
   async function boot() {
@@ -2569,7 +2694,7 @@
     const wantsLogin = params.get("sso") === "1" || location.hash === "#sso-admin";
     const hasSession = !!readSession();
 
-    if (hasSession && wantsPanel) openPanel();
+    if (hasSession && wantsPanel) openPanel("content");
     if (wantsLogin) setTimeout(openLoginOrPanel, 300);
 
     try {

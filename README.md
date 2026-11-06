@@ -152,8 +152,10 @@ Yang masih disarankan: **verifikasi kepemilikan domain** dengan record `TXT`
 ## 7. Panel Admin (SSO)
 
 Panel admin bersifat **tersembunyi** dan tidak muncul di menu publik. Kredensial
-login diberikan kepada pengelola situs. Setelah masuk, seluruh teks, gambar,
-tautan, SEO, warna, dan pengaturan kontak dapat diedit langsung dari halaman.
+login diberikan kepada pengelola situs. Setelah login, Anda langsung masuk ke
+**Dashboard Admin** berlayout penuh/memanjang dengan sidebar menu, daftar
+halaman, serta area kerja lebar untuk mengedit seluruh teks, gambar, tautan,
+SEO, warna, dan pengaturan kontak.
 
 ### Cara membuka panel
 
@@ -163,10 +165,17 @@ tautan, SEO, warna, dan pengaturan kontak dapat diedit langsung dari halaman.
 - Klik ikon kunci samar yang muncul saat area footer disentuh.
 - Buka alamat situs dengan tambahan `#sso-admin`.
 
+### Mengedit dari dashboard
+
+- Gunakan menu sidebar **Konten Website**, **Pengaturan**, **Publikasi**, dan **Bantuan**.
+- Klik **Edit di Halaman** untuk menutup dashboard dan mengedit langsung di situs.
+- Klik **Lihat Situs** untuk melihat tampilan publik; buka kembali dashboard dari
+  bilah admin di bagian bawah layar.
+
 ### Menyimpan perubahan
 
 1. Perubahan langsung tampil dan otomatis disimpan sebagai draft di browser.
-2. Buka tab **Publikasi** di panel.
+2. Buka tab **Publikasi** di dashboard.
 3. Masukkan GitHub Personal Access Token dengan izin **Contents: Read and write**
    pada repository ini, lalu klik **Publikasikan Sekarang**.
 4. Konten tersimpan di `assets/data/content.json`. GitHub Pages biasanya

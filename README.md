@@ -31,6 +31,8 @@ sehingga dapat langsung di-hosting gratis di **GitHub Pages**.
 └── assets/
     ├── css/style.css       # Seluruh tampilan (satu berkas)
     ├── js/main.js          # Seluruh interaksi + PENGATURAN PENTING
+    ├── js/admin.js         # SSO Panel Admin (tersembunyi)
+    ├── data/content.json   # Penyimpanan konten yang dipublikasikan
     └── img/
         ├── logo.svg        # Logo lembaga
         ├── favicon.svg     # Ikon tab peramban
@@ -147,6 +149,37 @@ Yang masih disarankan: **verifikasi kepemilikan domain** dengan record `TXT`
 
 ---
 
-## 7. Lisensi & Kepemilikan
+## 7. Panel Admin (SSO)
+
+Panel admin bersifat **tersembunyi** dan tidak muncul di menu publik. Kredensial
+login diberikan kepada pengelola situs. Setelah masuk, seluruh teks, gambar,
+tautan, SEO, warna, dan pengaturan kontak dapat diedit langsung dari halaman.
+
+### Cara membuka panel
+
+- Tekan `Ctrl + Shift + A` (Windows/Linux) atau `Cmd + Shift + A` (Mac).
+- Tekan `Alt + Shift + A`.
+- Klik **5 kali cepat** pada teks copyright di footer.
+- Klik ikon kunci samar yang muncul saat area footer disentuh.
+- Buka alamat situs dengan tambahan `#sso-admin`.
+
+### Menyimpan perubahan
+
+1. Perubahan langsung tampil dan otomatis disimpan sebagai draft di browser.
+2. Buka tab **Publikasi** di panel.
+3. Masukkan GitHub Personal Access Token dengan izin **Contents: Read and write**
+   pada repository ini, lalu klik **Publikasikan Sekarang**.
+4. Konten tersimpan di `assets/data/content.json`. GitHub Pages biasanya
+   memperbarui situs dalam 1–2 menit, dan konten live juga diambil langsung dari
+   repository agar perubahan lebih cepat terlihat.
+
+> **Penting:** karena situs ini statis, login panel adalah gerbang sisi klien,
+> bukan autentikasi server. Untuk keamanan produksi, gunakan OAuth/SSO server
+> dan token GitHub dengan izin minimum. Jangan pernah menaruh token GitHub di
+> dalam kode atau repository.
+
+---
+
+## 8. Lisensi & Kepemilikan
 
 Seluruh isi dan kode website ini milik **Indonesia Kompeten**.

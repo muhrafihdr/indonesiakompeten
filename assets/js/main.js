@@ -25,6 +25,28 @@ const SITE = {
   formEndpoint: "",
 };
 
+// Simpan nilai bawaan agar Panel Admin dapat mengembalikan pengaturan awal.
+const SITE_DEFAULTS = Object.freeze({ ...SITE });
+
+// Baca pengaturan situs yang tersimpan dari Panel Admin (jika ada).
+// Ini memastikan formulir & tautan WhatsApp/email memakai nilai terbaru
+// bahkan sebelum berkas admin.js selesai dimuat.
+try {
+  const raw = localStorage.getItem("ik_cms_content_v1");
+  if (raw) {
+    const saved = JSON.parse(raw);
+    if (saved && saved.site && typeof saved.site === "object") {
+      ["whatsapp", "email", "nama", "formEndpoint"].forEach((key) => {
+        if (Object.prototype.hasOwnProperty.call(saved.site, key)) {
+          SITE[key] = String(saved.site[key] ?? "");
+        }
+      });
+    }
+  }
+} catch (_) {
+  /* Abaikan data lokal yang rusak. */
+}
+
 (function () {
   "use strict";
 
@@ -161,15 +183,29 @@ const SITE = {
   }
 
   /* ---------- 7. Formulir kontak ---------- */
+  function applyFormEndpoint() {
+    const form = $("#contactForm");
+    if (!form) return;
+    const endpoint = String(SITE.formEndpoint || "").trim();
+    if (/^https?:\/\//i.test(endpoint)) {
+      form.setAttribute("action", endpoint);
+      form.setAttribute("method", "post");
+    } else {
+      form.setAttribute("action", "#");
+      form.setAttribute("method", "post");
+    }
+  }
+
   function initForm() {
     const form = $("#contactForm");
     if (!form) return;
 
+    applyFormEndpoint();
     const status = $("#formStatus", form);
 
     form.addEventListener("submit", (e) => {
-      // Jika endpoint diisi, biarkan formulir terkirim normal.
-      if (SITE.formEndpoint) return;
+      // Jika endpoint valid diisi, biarkan formulir terkirim normal.
+      if (/^https?:\/\//i.test(String(SITE.formEndpoint || "").trim())) return;
 
       e.preventDefault();
 
@@ -242,6 +278,21 @@ const SITE = {
     initFilter();
     initYear();
   }
+
+  // API kecil untuk Panel Admin (SSO) agar perubahan pengaturan situs
+  // langsung dipakai oleh formulir, tautan WhatsApp, dan tautan email.
+  window.IK = window.IK || {};
+  window.IK.SITE = SITE;
+  window.IK.defaults = SITE_DEFAULTS;
+  window.IK.applySiteSettings = function (settings) {
+    const merged = { ...SITE_DEFAULTS, ...(settings && typeof settings === "object" ? settings : {}) };
+    ["whatsapp", "email", "nama", "formEndpoint"].forEach((key) => {
+      SITE[key] = String(merged[key] ?? "");
+    });
+    initLinks();
+    applyFormEndpoint();
+  };
+  window.IK.refreshLinks = initLinks;
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);

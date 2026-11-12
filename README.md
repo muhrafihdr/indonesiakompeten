@@ -19,7 +19,7 @@ sehingga dapat langsung di-hosting gratis di **GitHub Pages**.
 ├── layanan.html            # Daftar skema + layanan + persyaratan + PBK
 ├── alur.html               # Alur sertifikasi 8 tahap
 ├── daftar-pelatihan.html   # Daftar program pelatihan + formulir pendaftaran
-├── materi-pelatihan.html   # Materi pelatihan via Google Drive
+├── materi-pelatihan.html   # Peserta mencari & mengakses materi Google Drive
 ├── faq.html                # Pertanyaan umum
 ├── kontak.html             # Informasi kontak + formulir pendaftaran
 ├── 404.html                # Halaman error (otomatis dipakai GitHub Pages)
@@ -34,10 +34,10 @@ sehingga dapat langsung di-hosting gratis di **GitHub Pages**.
     ├── css/style.css       # Seluruh tampilan (satu berkas)
     ├── js/main.js          # Seluruh interaksi + PENGATURAN PENTING
     ├── js/pelatihan.js     # Data program pelatihan + formulir pendaftaran
-    ├── js/materi.js        # Integrasi materi Google Drive + penyaring
+    ├── js/materi.js        # Akses materi Google Drive + penyaring peserta
     ├── js/admin.js         # SSO Panel Admin (tersembunyi)
     ├── data/content.json   # Penyimpanan konten yang dipublikasikan
-    ├── data/materi.json    # Daftar materi yang dipublikasikan
+    ├── data/materi.json    # Data materi lama (kompatibilitas)
     └── img/
         ├── logo.svg        # Logo lembaga
         ├── favicon.svg     # Ikon tab peramban
@@ -69,54 +69,40 @@ Lalu buka http://localhost:8000
 
 ## 3. Materi Pelatihan & Google Drive
 
-Halaman **Materi Pelatihan** (`materi-pelatihan.html`) memakai Google Drive sebagai
-penyimpanan materi. Tidak ada server upload di situs statis, sehingga alurnya:
+Halaman **Materi Pelatihan** (`materi-pelatihan.html`) hanya dipakai peserta untuk
+**mencari dan mengakses materi**. Pengelolaan folder dan tautan materi dilakukan
+sepenuhnya dari **Panel Admin**.
 
-1. Pengelola membuat folder Google Drive untuk setiap program pelatihan.
-2. Buka halaman **Materi Pelatihan**, pilih program, lalu klik **Atur Folder** dan
-   tempelkan tautan folder Google Drive. Pengaturan ini tersimpan di peramban.
-   Cara yang lebih permanen: buka **Panel Admin → Pengaturan Website**, isi kolom
-   **Folder Drive** untuk setiap program, lalu publikasikan.
-3. Untuk membuat pengaturan berlaku bagi semua pengunjung, isi nilai default pada
-   `assets/js/materi.js` bagian `CONFIG.folders`:
+### Alur pengelola
 
-   ```js
-   folders: {
-     kkni: "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx",
-     pariwisata: "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx",
-     golf: "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx",
-     digital: "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx",
-     karir: "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx",
-   }
-   ```
+1. Masuk ke **Panel Admin** (`Ctrl/Cmd + Shift + A`).
+2. Buka tab **Materi Pelatihan**.
+3. Atur folder Google Drive tiap program melalui tombol **Atur Folder** (masuk ke
+   tab Pengaturan) atau langsung di **Pengaturan Website**:
+   - Folder Drive — PBK KKNI
+   - Folder Drive — Pariwisata
+   - Folder Drive — Golf
+   - Folder Drive — Teknologi Digital
+   - Folder Drive — Pengembangan Karir
+4. Di tab **Materi Pelatihan**, klik **Buka / Unggah** pada program yang dipilih
+   untuk membuka folder Google Drive, lalu unggah file melalui Google Drive.
+5. Setelah file terunggah, isi formulir **Tambah Materi** di panel admin:
+   judul, program, level/sub-program, tautan Google Drive, dan keterangan.
+6. Buka tab **Publikasi**, lalu klik **Publikasikan Sekarang**. Daftar materi
+   disimpan otomatis di `assets/data/content.json` bersama konten website.
 
-4. Klik **Unggah Materi ke Google Drive** untuk membuka folder Drive dan mengunggah
-   file (login dengan akun pengelola). Isi folder akan tampil pada embed Google Drive.
-5. Untuk menampilkan materi pada daftar materi, buka **Tambah / Tautkan Materi dari
-   Google Drive**, isi judul, program, level, dan tautan file Drive, lalu klik
-   **Tambah Materi**.
-6. Klik **Ekspor materi.json**, lalu unggah hasilnya ke `assets/data/materi.json`
-   di repositori agar daftar materi tampil untuk semua pengunjung. Format berkas:
+Peserta tidak memiliki tombol unggah, pengaturan folder, atau formulir tambah
+materi. Mereka hanya dapat memilih program, mencari materi, dan membuka tautan
+Google Drive.
 
-   ```json
-   {
-     "version": 1,
-     "updatedAt": "2026-11-12T00:00:00.000Z",
-     "materials": [
-       {
-         "title": "Modul Communication Skills",
-         "program": "karir",
-         "level": "Communication Skills",
-         "url": "https://drive.google.com/file/d/xxxxxxxx/view",
-         "description": "Modul pelatihan komunikasi profesional."
-       }
-     ]
-   }
-   ```
+### Catatan teknis
 
-> Atur izin folder Google Drive dengan benar. Gunakan **“Siapa saja yang memiliki
-> link”** untuk materi publik, atau batasi akses untuk materi internal. Jangan
-> mengunggah data pribadi peserta ke folder publik.
+- Materi disimpan pada array `materials` di `assets/data/content.json`.
+- `assets/data/materi.json` masih didukung sebagai data lama, tetapi pengelolaan
+  baru sebaiknya melalui Panel Admin.
+- Folder Google Drive harus dibagikan dengan benar. Gunakan **“Siapa saja yang
+  memiliki link”** untuk materi publik, atau batasi akses untuk materi internal.
+- Jangan mengunggah data pribadi peserta ke folder publik.
 
 ---
 
@@ -134,7 +120,7 @@ Cari dan ganti semua teks di dalam tanda `[ ]`. Daftar lengkapnya:
 | `layanan.html` | Pastikan daftar skema benar-benar tersedia/dilisensikan |
 | `kontak.html` | Jam layanan, peta Google Maps, nomor rekening resmi |
 | `assets/js/materi.js` | Folder Google Drive tiap program (bagian `CONFIG.folders`) |
-| `assets/data/materi.json` | Daftar materi yang dipublikasikan |
+| `assets/data/content.json` | Daftar materi dikelola dari Panel Admin (array `materials`) |
 
 > **Penting:** jangan mencantumkan nomor lisensi, akreditasi, atau skema yang
 > belum benar-benar dimiliki lembaga. Informasi yang tidak akurat pada situs
@@ -210,7 +196,7 @@ Yang masih disarankan: **verifikasi kepemilikan domain** dengan record `TXT`
   Alur, Daftar Pelatihan, dan Materi Pelatihan.
 - **Penyaring skema** — peserta dapat menyaring skema berdasarkan bidang.
 - **Pendaftaran pelatihan** — formulir nama, alamat, no. handphone, email, program, dan level/sub-program.
-- **Materi Google Drive** — folder per program, embed daftar file, tombol unggah, dan pengelola tautan materi.
+- **Materi Google Drive** — pengelolaan folder dan tautan materi hanya di Panel Admin; peserta hanya mencari dan mengakses materi.
 - **Slide show partner** — menampilkan Partner LSP dan Partner Pelatihan di beranda.
 - **Tombol WhatsApp mengambang** — kanal komunikasi yang paling familiar.
 

@@ -69,6 +69,10 @@
       title: "Dashboard Konten",
       subtitle: "Kelola seluruh teks, gambar, tautan, dan elemen halaman aktif dari satu tempat.",
     },
+    materials: {
+      title: "Materi Pelatihan",
+      subtitle: "Kelola folder Google Drive dan tautan materi untuk peserta pelatihan.",
+    },
     settings: {
       title: "Pengaturan Website",
       subtitle: "Atur identitas, kontak, SEO per halaman, dan warna utama website.",
@@ -123,6 +127,41 @@
     { key: "driveFolderKarir", label: "Folder Drive — Pengembangan Karir", type: "url", hint: "Tautan folder Google Drive untuk program Pengembangan Karir." },
   ];
 
+  // Data program pelatihan untuk pengelolaan materi di panel admin.
+  // Harus sinkron dengan assets/js/pelatihan.js.
+  const MATERI_PROGRAMS = [
+    {
+      id: "kkni",
+      label: "PBK Metodologi Pelatihan KKNI",
+      siteKey: "driveFolderKkni",
+      options: ["Level 3", "Level 4", "Level 5", "Level 6"],
+    },
+    {
+      id: "pariwisata",
+      label: "PBK Bidang Pariwisata",
+      siteKey: "driveFolderPariwisata",
+      options: ["Tour Guide (National / Internasional)", "Tour Planner", "Manajer Humas Destinasi"],
+    },
+    {
+      id: "golf",
+      label: "PBK Bidang Golf",
+      siteKey: "driveFolderGolf",
+      options: ["Golfing Assistant Caddy", "Porter", "Starter and Marshall", "Golf Operation Manager"],
+    },
+    {
+      id: "digital",
+      label: "PBK Bidang Teknologi Digital",
+      siteKey: "driveFolderDigital",
+      options: ["Digital Marketing", "Copywriting"],
+    },
+    {
+      id: "karir",
+      label: "Pengembangan Karir",
+      siteKey: "driveFolderKarir",
+      options: ["Communication Skills", "Upgrade Your Skills"],
+    },
+  ];
+
   const ATTR_RULES = [
     { selector: "a[href]", type: "link", label: "Tautan", fields: ["href", "title", "target", "rel"] },
     { selector: "img[src]", type: "image", label: "Gambar", fields: ["src", "alt", "title"] },
@@ -167,6 +206,7 @@
   let submittingLogin = false;
   let mediaTarget = null;
   let linkTarget = null;
+  let editingMaterialId = null;
 
   const ui = {};
 
@@ -185,7 +225,7 @@
   }
 
   function emptyState() {
-    return { version: 1, updatedAt: null, site: {}, theme: {}, pages: {} };
+    return { version: 1, updatedAt: null, site: {}, theme: {}, pages: {}, materials: [], materialsManaged: false };
   }
 
   function safeEqual(a, b) {
@@ -361,6 +401,43 @@
     return false;
   }
 
+  function isDriveUrl(value) {
+    return /^https:\/\/(drive|docs)\.google\.com\//i.test(String(value || "").trim());
+  }
+
+  function materialProgram(id) {
+    return MATERI_PROGRAMS.find((program) => program.id === id) || null;
+  }
+
+  function normalizeMaterialItem(item, index) {
+    if (!item || typeof item !== "object") return null;
+    const title = String(item.title || "").trim().slice(0, 220);
+    const url = String(item.url || "").trim();
+    if (!title || !isDriveUrl(url)) return null;
+    const program = String(item.program || "").trim();
+    return {
+      id: String(item.id || "mat-" + (index + 1)).slice(0, 80),
+      title,
+      program,
+      level: String(item.level || "").trim().slice(0, 160),
+      url: url.slice(0, 1200),
+      description: String(item.description || "").trim().slice(0, 2000),
+      createdAt: String(item.createdAt || "").slice(0, 40),
+    };
+  }
+
+  function driveFolderLink(value) {
+    const text = String(value || "").trim();
+    if (!text) return "";
+    let id = "";
+    const folder = text.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+    const query = text.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (folder) id = folder[1];
+    else if (query) id = query[1];
+    else if (/^[a-zA-Z0-9_-]{15,}$/.test(text)) id = text;
+    return id ? "https://drive.google.com/drive/folders/" + encodeURIComponent(id) : "";
+  }
+
   function sanitizeAttr(attr, value, el) {
     const text = String(value ?? "");
     if (attr === "href") return isSafeUrl(text, false) ? text : null;
@@ -397,6 +474,7 @@
 
   function countChanges() {
     let total = Object.keys(state.site || {}).length + Object.keys(state.theme || {}).length;
+    if (state.materialsManaged) total += (state.materials || []).length;
     Object.values(state.pages || {}).forEach((page) => {
       total += Object.keys(page.meta || {}).length;
       total += Object.keys(page.text || {}).length;
@@ -426,6 +504,16 @@
         const value = input.theme[key];
         if (typeof value === "string" && isColor(value)) out.theme[key] = value.slice(0, 80);
       });
+    }
+
+    if (Array.isArray(input.materials)) {
+      out.materials = input.materials
+        .slice(0, 500)
+        .map((item, index) => normalizeMaterialItem(item, index))
+        .filter(Boolean);
+    }
+    if (input.materialsManaged === true || (Array.isArray(input.materials) && input.materials.length > 0)) {
+      out.materialsManaged = true;
     }
 
     if (input.pages && typeof input.pages === "object") {
@@ -480,6 +568,8 @@
     out.updatedAt = incoming.updatedAt || out.updatedAt || null;
     out.site = Object.assign({}, out.site, incoming.site);
     out.theme = Object.assign({}, out.theme, incoming.theme);
+    out.materials = incoming.materialsManaged ? incoming.materials : base.materials;
+    out.materialsManaged = incoming.materialsManaged || base.materialsManaged;
     out.pages = Object.assign({}, out.pages);
     Object.keys(incoming.pages).forEach((pageId) => {
       const a = out.pages[pageId] || { meta: {}, text: {}, attrs: {} };
@@ -639,19 +729,27 @@
   }
 
   /* ---------- Terapkan konten ke halaman ---------- */
+  function applyMaterials() {
+    const materials = Array.isArray(state.materials) ? state.materials : [];
+    const managed = state.materialsManaged === true;
+    if (window.IK) window.IK.MATERIALS = materials;
+    document.dispatchEvent(new CustomEvent("ik:materials", { detail: { materials, managed } }));
+  }
+
   function applyAll(options = {}) {
     const rerender = options.rerender !== false;
     const wasEditing = editing;
     if (wasEditing) exitEditMode({ silent: true });
 
     applySite();
+    applyMaterials();
     applyTheme();
     applyMeta();
     applyTexts();
     applyAttrs();
 
     if (wasEditing) enterEditMode({ silent: true });
-    if (rerender && panelOpen && (activeTab === "content" || activeTab === "settings")) renderActiveTab();
+    if (rerender && panelOpen && (activeTab === "content" || activeTab === "materials" || activeTab === "settings")) renderActiveTab();
     updateBar();
   }
 
@@ -1213,6 +1311,7 @@
     if (!panelOpen) return;
     updateDashboardMeta();
     if (activeTab === "content") renderContentTab();
+    else if (activeTab === "materials") renderMaterialsTab();
     else if (activeTab === "settings") renderSettingsTab();
     else if (activeTab === "publish") renderPublishTab();
     else if (activeTab === "help") renderHelpTab();
@@ -1294,6 +1393,7 @@
               <p class="cms-sidebar-label">Menu Dashboard</p>
               <nav class="cms-tabs" role="tablist" aria-label="Menu Dashboard Admin">
                 <button type="button" role="tab" class="cms-tab is-active" data-cms-tab-button="content" aria-selected="true">Konten Website</button>
+                <button type="button" role="tab" class="cms-tab" data-cms-tab-button="materials" aria-selected="false">Materi Pelatihan</button>
                 <button type="button" role="tab" class="cms-tab" data-cms-tab-button="settings" aria-selected="false">Pengaturan</button>
                 <button type="button" role="tab" class="cms-tab" data-cms-tab-button="publish" aria-selected="false">Publikasi</button>
                 <button type="button" role="tab" class="cms-tab" data-cms-tab-button="help" aria-selected="false">Bantuan</button>
@@ -1320,6 +1420,7 @@
             </div>
             <div class="cms-panel-body" id="cmsPanelBody">
               <section data-cms-tab="content"></section>
+              <section data-cms-tab="materials" hidden></section>
               <section data-cms-tab="settings" hidden></section>
               <section data-cms-tab="publish" hidden></section>
               <section data-cms-tab="help" hidden></section>
@@ -1700,6 +1801,106 @@
         <h3>Tampilan & Warna</h3>
         <p class="cms-hint">Ubah variabel warna utama situs. Perubahan langsung terlihat.</p>
         ${themeHtml}
+      </div>
+    `;
+  }
+
+  /* ---------- Render: tab Materi Pelatihan ---------- */
+  function materialProgramOptions(selectedId) {
+    return MATERI_PROGRAMS.map((program) => {
+      const selected = program.id === selectedId ? " selected" : "";
+      return `<option value="${esc(program.id)}"${selected}>${esc(program.label)}</option>`;
+    }).join("");
+  }
+
+  function materialLevelOptions(programId, selectedLevel) {
+    const program = materialProgram(programId);
+    if (!program) return `<option value="">Pilih program terlebih dahulu</option>`;
+    return (
+      `<option value="">Pilih ${esc(program.label)}</option>` +
+      program.options
+        .map((level) => {
+          const selected = level === selectedLevel ? " selected" : "";
+          return `<option value="${esc(level)}"${selected}>${esc(level)}</option>`;
+        })
+        .join("")
+    );
+  }
+
+  function renderMaterialsTab() {
+    const section = $('[data-cms-tab="materials"]', ui.panelBody);
+    if (!section) return;
+
+    const editing = editingMaterialId
+      ? (state.materials || []).find((item) => item.id === editingMaterialId) || null
+      : null;
+    if (editingMaterialId && !editing) editingMaterialId = null;
+
+    const folderCards = MATERI_PROGRAMS.map((program) => {
+      const link = driveFolderLink(siteValue(program.siteKey));
+      return `
+        <div class="cms-material-folder">
+          <div class="cms-material-folder-info">
+            <strong>${esc(program.label)}</strong>
+            <span>${link ? "Folder Google Drive siap" : "Folder Google Drive belum diatur"}</span>
+          </div>
+          ${link
+            ? `<a class="cms-btn cms-btn--ghost cms-btn--sm" href="${esc(link)}" target="_blank" rel="noopener">Buka / Unggah</a>`
+            : `<button type="button" class="cms-btn cms-btn--ghost cms-btn--sm" data-cms-action="goto-settings" data-key="${esc(program.siteKey)}">Atur Folder</button>`}
+        </div>`;
+    }).join("");
+
+    const materialRows = (state.materials || []).map((item) => {
+      const program = materialProgram(item.program);
+      return `
+        <div class="cms-material-row">
+          <div class="cms-material-row-main">
+            <strong>${esc(item.title)}</strong>
+            <p>${esc(program ? program.label : item.program || "Program belum dipilih")}${item.level ? " • " + esc(item.level) : ""}</p>
+            <a href="${esc(item.url)}" target="_blank" rel="noopener">Buka materi di Google Drive</a>
+          </div>
+          <div class="cms-material-row-actions">
+            <button type="button" class="cms-btn cms-btn--ghost cms-btn--sm" data-cms-action="material-edit" data-id="${esc(item.id)}">Edit</button>
+            <button type="button" class="cms-btn cms-btn--danger-ghost cms-btn--sm" data-cms-action="material-delete" data-id="${esc(item.id)}">Hapus</button>
+          </div>
+        </div>`;
+    }).join("");
+
+    const selectedProgram = editing ? editing.program : "";
+    const selectedLevel = editing ? editing.level : "";
+
+    section.innerHTML = `
+      <div class="cms-card">
+        <h3>Folder Google Drive</h3>
+        <p class="cms-hint">Upload materi dilakukan melalui Google Drive. Atur tautan folder tiap program di tab <strong>Pengaturan</strong>, lalu gunakan tombol di bawah untuk membuka folder dan mengunggah file.</p>
+        <div class="cms-material-folders">${folderCards}</div>
+      </div>
+
+      <div class="cms-card">
+        <h3>${editing ? "Edit Materi" : "Tambah Materi"}</h3>
+        <p class="cms-hint">Setelah file diunggah ke Google Drive, tempelkan tautan file/folder ke formulir ini agar peserta dapat mencari dan mengaksesnya.</p>
+        <form id="cmsMaterialForm" autocomplete="off">
+          <label class="cms-label"><span>Judul materi</span><input class="cms-input" type="text" id="cmsMaterialTitle" value="${esc(editing ? editing.title : "")}" placeholder="Contoh: Modul Communication Skills" spellcheck="false"></label>
+          <div class="cms-grid-2">
+            <label class="cms-label"><span>Program pelatihan</span><select class="cms-input" id="cmsMaterialProgram"><option value="">Pilih program</option>${materialProgramOptions(selectedProgram)}</select></label>
+            <label class="cms-label"><span>Level / sub-program</span><select class="cms-input" id="cmsMaterialLevel">${materialLevelOptions(selectedProgram, selectedLevel)}</select></label>
+          </div>
+          <label class="cms-label"><span>Tautan Google Drive</span><input class="cms-input" type="url" id="cmsMaterialUrl" value="${esc(editing ? editing.url : "")}" placeholder="https://drive.google.com/file/d/…" spellcheck="false"></label>
+          <label class="cms-label"><span>Keterangan singkat</span><textarea class="cms-input cms-textarea" id="cmsMaterialDescription" rows="3" placeholder="Isi materi atau catatan untuk peserta." spellcheck="false">${esc(editing ? editing.description : "")}</textarea></label>
+          <div class="cms-btn-row">
+            <button type="submit" class="cms-btn cms-btn--primary">${editing ? "Simpan Perubahan" : "Tambah Materi"}</button>
+            ${editing ? '<button type="button" class="cms-btn cms-btn--ghost" data-cms-action="material-cancel">Batal</button>' : ""}
+          </div>
+          <p class="cms-status" id="cmsMaterialStatus" role="status"></p>
+        </form>
+      </div>
+
+      <div class="cms-card">
+        <div class="cms-setting-head">
+          <h3>Daftar Materi (${(state.materials || []).length})</h3>
+        </div>
+        ${materialRows ? `<div class="cms-material-list">${materialRows}</div>` : '<p class="cms-hint">Belum ada materi. Tambahkan materi pertama melalui formulir di atas.</p>'}
+        <p class="cms-hint">Materi yang ditambahkan di sini akan tampil di halaman <strong>Materi Pelatihan</strong> setelah dipublikasikan.</p>
       </div>
     `;
   }
@@ -2203,6 +2404,10 @@
         else if (action === "reset-site") resetSiteField(key);
         else if (action === "reset-meta") resetMetaField(key);
         else if (action === "reset-theme") resetThemeField(key);
+        else if (action === "material-edit") editMaterial(button.dataset.id || "");
+        else if (action === "material-delete") deleteMaterial(button.dataset.id || "");
+        else if (action === "material-cancel") cancelMaterialEdit();
+        else if (action === "goto-settings") gotoFolderSettings(key);
         else if (action === "download-json") downloadJson();
         else if (action === "reload-server") reloadServer();
         else if (action === "reset-local") resetLocal();
@@ -2259,8 +2464,19 @@
       }
     });
 
+    ui.panel.addEventListener("submit", (event) => {
+      if (event.target.id === "cmsMaterialForm") {
+        event.preventDefault();
+        saveMaterialFromForm();
+      }
+    });
+
     ui.panel.addEventListener("change", (event) => {
       if (event.target.id === "cmsImportFile") importJsonFile(event.target.files && event.target.files[0]);
+      if (event.target.id === "cmsMaterialProgram") {
+        const level = $("#cmsMaterialLevel", ui.panel);
+        if (level) level.innerHTML = materialLevelOptions(event.target.value, "");
+      }
     });
 
     ui.root.addEventListener("click", (event) => {
@@ -2497,6 +2713,99 @@
     return btoa(binary);
   }
 
+  function saveMaterialFromForm() {
+    if (!ui.panel) return;
+    const title = (($("#cmsMaterialTitle", ui.panel) || {}).value || "").trim();
+    const programId = (($("#cmsMaterialProgram", ui.panel) || {}).value || "").trim();
+    const level = (($("#cmsMaterialLevel", ui.panel) || {}).value || "").trim();
+    const url = (($("#cmsMaterialUrl", ui.panel) || {}).value || "").trim();
+    const description = (($("#cmsMaterialDescription", ui.panel) || {}).value || "").trim();
+    const status = $("#cmsMaterialStatus", ui.panel);
+
+    const fail = (message) => {
+      if (status) {
+        status.textContent = message;
+        status.dataset.state = "error";
+      }
+    };
+
+    const program = materialProgram(programId);
+    if (!title) return fail("Judul materi wajib diisi.");
+    if (!program) return fail("Pilih program pelatihan terlebih dahulu.");
+    if (!level) return fail("Pilih level atau sub-program terlebih dahulu.");
+    if (!isDriveUrl(url)) {
+      return fail("Tautan harus berupa tautan Google Drive (drive.google.com atau docs.google.com).");
+    }
+
+    const materials = Array.isArray(state.materials) ? [...state.materials] : [];
+    const index = editingMaterialId
+      ? materials.findIndex((item) => item.id === editingMaterialId)
+      : -1;
+
+    if (index >= 0) {
+      materials[index] = {
+        ...materials[index],
+        title: title.slice(0, 220),
+        program: program.id,
+        level: level.slice(0, 160),
+        url: url.slice(0, 1200),
+        description: description.slice(0, 2000),
+      };
+    } else {
+      materials.unshift({
+        id: "mat-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+        title: title.slice(0, 220),
+        program: program.id,
+        level: level.slice(0, 160),
+        url: url.slice(0, 1200),
+        description: description.slice(0, 2000),
+        createdAt: new Date().toISOString(),
+      });
+    }
+
+    state.materials = materials;
+    state.materialsManaged = true;
+    editingMaterialId = null;
+    markDirty();
+    applyMaterials();
+    renderMaterialsTab();
+    toast(index >= 0 ? "Materi diperbarui." : "Materi ditambahkan.", "success");
+  }
+
+  function editMaterial(id) {
+    editingMaterialId = id;
+    renderMaterialsTab();
+    const form = $("#cmsMaterialForm", ui.panel);
+    if (form) form.scrollIntoView({ behavior: "smooth", block: "center" });
+    const title = $("#cmsMaterialTitle", ui.panel);
+    if (title) setTimeout(() => title.focus({ preventScroll: true }), 350);
+  }
+
+  function deleteMaterial(id) {
+    if (!window.confirm("Hapus materi ini dari daftar? File di Google Drive tidak ikut terhapus.")) return;
+    state.materials = (state.materials || []).filter((item) => item.id !== id);
+    state.materialsManaged = true;
+    if (editingMaterialId === id) editingMaterialId = null;
+    markDirty();
+    applyMaterials();
+    renderMaterialsTab();
+    toast("Materi dihapus dari daftar.", "success");
+  }
+
+  function cancelMaterialEdit() {
+    editingMaterialId = null;
+    renderMaterialsTab();
+  }
+
+  function gotoFolderSettings(key) {
+    setTab("settings");
+    requestAnimationFrame(() => {
+      const target = key || "driveFolderKkni";
+      const input = $('[data-cms-site-input][data-key="' + cssEscape(target) + '"]', ui.panel);
+      if (input) input.focus();
+    });
+  }
+
   async function publishToGithub() {
     if (!ui.panel) return;
     const token = (($("#cmsGhToken", ui.panel) || {}).value || "").trim();
@@ -2626,7 +2935,8 @@
       const parsed = JSON.parse(text);
       const normalized = normalizeState(parsed);
       const total = Object.keys(normalized.pages || {}).length;
-      if (!total && !Object.keys(normalized.site || {}).length) {
+      const hasMaterials = (normalized.materials || []).length > 0 || normalized.materialsManaged;
+      if (!total && !Object.keys(normalized.site || {}).length && !hasMaterials) {
         toast("Berkas tidak berisi data konten yang dikenali.", "error");
         return;
       }

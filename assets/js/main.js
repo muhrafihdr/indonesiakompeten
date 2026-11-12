@@ -50,6 +50,9 @@ try {
         }
       });
     }
+    if (saved && Array.isArray(saved.materials)) {
+      window.IK_MATERIALS_SEED = saved.materials;
+    }
   }
 } catch (_) {
   /* Abaikan data lokal yang rusak. */

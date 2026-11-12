@@ -3,5 +3,7 @@
   "updatedAt": null,
   "site": {},
   "theme": {},
-  "pages": {}
+  "pages": {},
+  "materials": [],
+  "materialsManaged": false
 }

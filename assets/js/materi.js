@@ -1,22 +1,19 @@
 /* =========================================================
-   Indonesia Kompeten — Materi Pelatihan & Google Drive
+   Indonesia Kompeten — Materi Pelatihan (halaman peserta)
    ---------------------------------------------------------
-   Materi disimpan di Google Drive. Halaman ini:
-   1. Menampilkan isi folder Google Drive per program.
-   2. Membuka folder Drive untuk mengunggah materi.
-   3. Menampilkan daftar materi dari assets/data/materi.json
-      dan tambahan tautan yang disimpan di peramban.
+   Halaman ini hanya untuk MENCARI dan MENGAKSES materi.
+   Pengelolaan folder dan tautan materi dilakukan di Panel Admin.
 
-   PENGELOLA: isi folder Google Drive pada objek CONFIG di
-   bawah ini (atau gunakan tombol "Atur Folder" di halaman).
+   Sumber materi:
+   1. content.json (dikelola dari Panel Admin)
+   2. materi.json (data lama, tetap didukung)
    ========================================================= */
 
 (function () {
   "use strict";
 
   const CONFIG = {
-    // Tempelkan ID folder atau URL folder Google Drive untuk tiap program.
-    // Contoh: "https://drive.google.com/drive/folders/1AbCdEfGhIjKlMnOp"
+    // Folder default bila belum diisi melalui Panel Admin.
     folders: {
       kkni: "",
       pariwisata: "",
@@ -26,9 +23,11 @@
     },
   };
 
-  const FOLDER_STORAGE = "ik_drive_folders_v1";
-  const MATERI_STORAGE = "ik_materi_v1";
-  const MATERIALS_URL = new URL("../data/materi.json", document.currentScript.src).href;
+  const CONTENT_URL = new URL("../data/content.json", document.currentScript.src).href;
+  const LEGACY_MATERIALS_URL = new URL("../data/materi.json", document.currentScript.src).href;
+
+  let cmsMaterials = [];
+  let liveMaterialsReceived = false;
 
   function esc(value) {
     return String(value == null ? "" : value)
@@ -77,25 +76,6 @@
     fillSelect(select, program.options, placeholder || levelPlaceholder(program));
   }
 
-  function readJson(key, fallback) {
-    try {
-      const raw = localStorage.getItem(key);
-      if (!raw) return fallback;
-      const parsed = JSON.parse(raw);
-      return parsed;
-    } catch (_) {
-      return fallback;
-    }
-  }
-
-  function writeJson(key, value) {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (_) {
-      /* Mode penyimpanan lokal bisa saja diblokir; UI tetap berjalan. */
-    }
-  }
-
   /* ---------- Google Drive ---------- */
   function driveFolderId(value) {
     const text = String(value || "").trim();
@@ -116,13 +96,7 @@
   }
 
   function isDriveLink(value) {
-    const text = String(value || "").trim();
-    return /^https:\/\/(drive|docs)\.google\.com\//i.test(text);
-  }
-
-  function folderOverrides() {
-    const data = readJson(FOLDER_STORAGE, {});
-    return data && typeof data === "object" && !Array.isArray(data) ? data : {};
+    return /^https:\/\/(drive|docs)\.google\.com\//i.test(String(value || "").trim());
   }
 
   function siteFolderFor(programId) {
@@ -133,12 +107,7 @@
   }
 
   function folderFor(programId) {
-    const overrides = folderOverrides();
-    if (Object.prototype.hasOwnProperty.call(overrides, programId)) {
-      return String(overrides[programId] || "").trim();
-    }
-    const configured = String(CONFIG.folders[programId] || "").trim();
-    return configured || siteFolderFor(programId);
+    return String(CONFIG.folders[programId] || "").trim() || siteFolderFor(programId);
   }
 
   function folderIdFor(programId) {
@@ -153,13 +122,6 @@
     const frame = document.getElementById("driveFrame");
     const placeholder = document.getElementById("drivePlaceholder");
     const openLink = document.getElementById("driveOpen");
-    const uploadLink = document.getElementById("driveUpload");
-    const configToggle = document.getElementById("driveConfigToggle");
-    const configBox = document.getElementById("driveConfig");
-    const folderInput = document.getElementById("driveFolderInput");
-    const saveButton = document.getElementById("driveConfigSave");
-    const clearButton = document.getElementById("driveConfigClear");
-    const configStatus = document.getElementById("driveConfigStatus");
 
     fillSelect(programSelect, programOptions(), "Pilih program pelatihan");
 
@@ -188,34 +150,21 @@
         placeholder.hidden = Boolean(id);
         if (!id) {
           placeholder.innerHTML = program
-            ? `<strong>Folder Google Drive untuk ${esc(program.badge)} belum diatur.</strong>
-               <span>Klik <em>Atur Folder</em> lalu tempelkan tautan folder Google Drive program ini. Setelah itu daftar materi akan tampil di sini.</span>`
+            ? `<strong>Materi ${esc(program.badge)} belum tersedia.</strong>
+               <span>Materi pelatihan untuk program ini belum ditautkan oleh pengelola. Silakan hubungi admin atau cek kembali nanti.</span>`
             : "<strong>Pilih program pelatihan</strong><span>Daftar materi Google Drive akan tampil setelah program dipilih.</span>";
         }
       }
 
       if (openLink) {
-        openLink.href = url || "https://drive.google.com/drive/my-drive";
+        openLink.hidden = !id;
+        openLink.href = url || "#";
         openLink.target = "_blank";
         openLink.rel = "noopener";
       }
 
-      if (uploadLink) {
-        uploadLink.href = url || "https://drive.google.com/drive/my-drive";
-        uploadLink.target = "_blank";
-        uploadLink.rel = "noopener";
-      }
-
       const title = program ? program.title : "Materi Pelatihan";
       if (frame) frame.title = `Daftar materi Google Drive — ${title}`;
-
-      if (folderInput) {
-        folderInput.value = programId ? folderFor(programId) : "";
-        folderInput.disabled = !programId;
-      }
-      if (saveButton) saveButton.disabled = !programId;
-      if (clearButton) clearButton.disabled = !programId;
-      if (configStatus && !programId) configStatus.textContent = "";
     }
 
     programSelect.addEventListener("change", () => {
@@ -230,7 +179,6 @@
 
     if (levelSelect) {
       levelSelect.addEventListener("change", () => {
-        // Level juga menyaring daftar materi di bawah.
         const programFilter = document.getElementById("materiFilterProgram");
         const levelFilter = document.getElementById("materiFilterLevel");
         const program = currentProgram();
@@ -244,119 +192,36 @@
       });
     }
 
-    if (configToggle && configBox) {
-      configToggle.addEventListener("click", () => {
-        const open = configBox.hidden;
-        configBox.hidden = !open;
-        configToggle.setAttribute("aria-expanded", String(open));
-        if (open && folderInput) folderInput.focus();
-      });
-    }
-
-    if (saveButton) {
-      saveButton.addEventListener("click", () => {
-        const program = currentProgram();
-        if (!program) return;
-        const raw = folderInput ? folderInput.value.trim() : "";
-        const id = driveFolderId(raw);
-
-        if (raw && !id) {
-          if (configStatus) {
-            configStatus.textContent =
-              "Tautan folder tidak dikenali. Tempelkan URL folder Google Drive atau ID foldernya.";
-            configStatus.style.color = "var(--red-600)";
-          }
-          return;
-        }
-
-        const overrides = folderOverrides();
-        if (id) overrides[program.id] = raw;
-        else delete overrides[program.id];
-        writeJson(FOLDER_STORAGE, overrides);
-
-        if (configStatus) {
-          configStatus.textContent = id
-            ? "Folder Google Drive berhasil disimpan untuk peramban ini."
-            : "Folder Google Drive dihapus untuk peramban ini.";
-          configStatus.style.color = "var(--green-600)";
-        }
-        updateViewer();
-      });
-    }
-
-    if (clearButton) {
-      clearButton.addEventListener("click", () => {
-        const program = currentProgram();
-        if (!program) return;
-        const overrides = folderOverrides();
-        delete overrides[program.id];
-        writeJson(FOLDER_STORAGE, overrides);
-        if (folderInput) folderInput.value = "";
-        if (configStatus) {
-          configStatus.textContent = "Folder Google Drive dihapus untuk peramban ini.";
-          configStatus.style.color = "var(--green-600)";
-        }
-        updateViewer();
-      });
-    }
-
-    // Perbarui folder bila pengaturan situs dari Panel Admin diterapkan.
     document.addEventListener("ik:site-settings", updateViewer);
-
-    // Tampilkan folder default saat halaman dibuka.
     updateViewer();
   }
 
   /* ---------- Daftar materi ---------- */
-  function normalizeMaterial(item) {
+  function normalizeMaterial(item, index) {
     if (!item || typeof item !== "object") return null;
     const title = String(item.title || "").trim();
     const url = String(item.url || "").trim();
-    if (!title || !url || !isDriveLink(url)) return null;
+    if (!title || !isDriveLink(url)) return null;
     return {
-      id: String(item.id || `mat-${url}`),
+      id: String(item.id || `mat-${index + 1}`),
       title,
       program: String(item.program || ""),
       level: String(item.level || ""),
       url,
       description: String(item.description || "").trim(),
       createdAt: String(item.createdAt || ""),
-      source: item.source === "local" ? "local" : "published",
     };
   }
 
-  function readLocalMaterials() {
-    const list = readJson(MATERI_STORAGE, []);
+  function normalizeList(list) {
     if (!Array.isArray(list)) return [];
     return list.map(normalizeMaterial).filter(Boolean);
   }
 
-  function saveLocalMaterials(list) {
-    writeJson(MATERI_STORAGE, list);
-  }
-
-  async function fetchPublishedMaterials() {
-    try {
-      const response = await fetch(MATERIALS_URL, { cache: "no-store" });
-      if (!response.ok) return [];
-      const json = await response.json();
-      const list = Array.isArray(json) ? json : json.materials;
-      if (!Array.isArray(list)) return [];
-      return list
-        .map((item) => normalizeMaterial({ ...item, source: "published" }))
-        .filter(Boolean);
-    } catch (_) {
-      return [];
-    }
-  }
-
-  let publishedMaterials = [];
-  let localMaterials = [];
-
-  function allMaterials() {
+  function uniqueMaterials(list) {
     const seen = new Set();
     const result = [];
-    [...localMaterials, ...publishedMaterials].forEach((item) => {
+    list.forEach((item) => {
       const key = item.url.toLowerCase();
       if (seen.has(key)) return;
       seen.add(key);
@@ -365,19 +230,28 @@
     return result;
   }
 
-  function formatDate(value) {
-    if (!value) return "";
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return "";
+  async function fetchJson(url) {
     try {
-      return new Intl.DateTimeFormat("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }).format(date);
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) return null;
+      return await response.json();
     } catch (_) {
-      return "";
+      return null;
     }
+  }
+
+  async function loadPublishedMaterials() {
+    const [content, legacy] = await Promise.all([
+      fetchJson(CONTENT_URL),
+      fetchJson(LEGACY_MATERIALS_URL),
+    ]);
+
+    const fromContent = content && Array.isArray(content.materials) ? content.materials : [];
+    const fromLegacy = legacy && (Array.isArray(legacy) ? legacy : legacy.materials);
+    return uniqueMaterials([
+      ...normalizeList(fromContent),
+      ...normalizeList(fromLegacy),
+    ]);
   }
 
   function renderMaterials() {
@@ -394,7 +268,7 @@
     const levelValue = levelFilter ? levelFilter.value : "";
     const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
 
-    const items = allMaterials().filter((item) => {
+    const items = cmsMaterials.filter((item) => {
       if (programValue && item.program !== programValue) return false;
       if (levelValue && item.level !== levelValue) return false;
       if (query) {
@@ -459,132 +333,52 @@
     if (searchInput) searchInput.addEventListener("input", renderMaterials);
   }
 
-  function setupMaterialForm() {
-    const form = document.getElementById("materiForm");
-    if (!form) return;
-
-    const programSelect = document.getElementById("materiProgram");
-    const levelSelect = document.getElementById("materiLevel");
-    const status = document.getElementById("materiStatus");
-    const exportButton = document.getElementById("materiExport");
-
-    fillSelect(programSelect, programOptions(), "Pilih program pelatihan");
-
-    function syncLevels() {
-      const program = getProgram(programSelect ? programSelect.value : "");
-      fillLevels(levelSelect, program, "Pilih level / sub-program");
+  function formatDate(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    try {
+      return new Intl.DateTimeFormat("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).format(date);
+    } catch (_) {
+      return "";
     }
+  }
 
-    if (programSelect) programSelect.addEventListener("change", syncLevels);
-    syncLevels();
-
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
-
-      const data = new FormData(form);
-      const get = (key) => String(data.get(key) || "").trim();
-      const url = get("url");
-      const program = getProgram(get("program"));
-
-      if (!isDriveLink(url)) {
-        if (status) {
-          status.textContent =
-            "Tautan harus berupa tautan Google Drive (drive.google.com atau docs.google.com).";
-          status.style.color = "var(--red-600)";
-        }
-        return;
-      }
-
-      const material = normalizeMaterial({
-        id: `mat-${Date.now()}`,
-        title: get("title"),
-        program: get("program"),
-        level: get("level"),
-        url,
-        description: get("description"),
-        createdAt: new Date().toISOString(),
-        source: "local",
-      });
-
-      if (!material) {
-        if (status) status.textContent = "Lengkapi judul dan tautan materi terlebih dahulu.";
-        return;
-      }
-
-      localMaterials = [material, ...localMaterials];
-      saveLocalMaterials(localMaterials);
-      renderMaterials();
-
-      if (status) {
-        status.textContent =
-          "Materi ditambahkan sebagai draf di peramban ini. Klik Ekspor materi.json untuk menerbitkannya.";
-        status.style.color = "var(--green-600)";
-      }
-
-      form.reset();
-      syncLevels();
-
-      if (program) {
-        const programFilter = document.getElementById("materiFilterProgram");
-        const levelFilter = document.getElementById("materiFilterLevel");
-        if (programFilter) programFilter.value = program.id;
-        if (levelFilter) {
-          fillLevels(levelFilter, program, "Semua level / sub-program");
-          levelFilter.value = "";
-          levelFilter.disabled = false;
-        }
-        renderMaterials();
-      }
-    });
-
-    if (exportButton) {
-      exportButton.addEventListener("click", () => {
-        const payload = {
-          version: 1,
-          updatedAt: new Date().toISOString(),
-          materials: allMaterials().map((item) => ({
-            title: item.title,
-            program: item.program,
-            level: item.level,
-            url: item.url,
-            description: item.description,
-            createdAt: item.createdAt,
-          })),
-        };
-        const blob = new Blob([JSON.stringify(payload, null, 2)], {
-          type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "materi.json";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        URL.revokeObjectURL(url);
-
-        if (status) {
-          status.textContent =
-            "Berkas materi.json diunduh. Unggah berkas ini ke assets/data/materi.json di repositori agar tampil untuk semua pengunjung.";
-          status.style.color = "var(--green-600)";
-        }
-      });
-    }
+  function applyLiveMaterials(list) {
+    cmsMaterials = uniqueMaterials(normalizeList(list));
+    liveMaterialsReceived = true;
+    renderMaterials();
   }
 
   async function init() {
     setupDriveUI();
     setupMaterialFilters();
-    setupMaterialForm();
 
-    localMaterials = readLocalMaterials();
-    publishedMaterials = await fetchPublishedMaterials();
+    // Tampilkan materi dari draft lokal Panel Admin lebih dulu (jika ada).
+    const seed = (window.IK && Array.isArray(window.IK.MATERIALS) && window.IK.MATERIALS)
+      || (Array.isArray(window.IK_MATERIALS_SEED) ? window.IK_MATERIALS_SEED : []);
+    cmsMaterials = uniqueMaterials(normalizeList(seed));
     renderMaterials();
+
+    document.addEventListener("ik:materials", (event) => {
+      const detail = event.detail || {};
+      const list = detail.materials;
+      // Abaikan event kosong dari draft lama yang belum pernah mengelola materi,
+      // agar materi hasil publikasi tetap dapat dimuat dari content.json.
+      if (detail.managed === true || (Array.isArray(list) && list.length)) {
+        applyLiveMaterials(list);
+      }
+    });
+
+    const published = await loadPublishedMaterials();
+    if (!liveMaterialsReceived && published.length) {
+      cmsMaterials = published;
+      renderMaterials();
+    }
   }
 
   if (document.readyState === "loading") {

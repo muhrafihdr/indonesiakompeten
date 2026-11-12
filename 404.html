@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css?v=20261106b">
+<link rel="stylesheet" href="/assets/css/style.css?v=20261112a">
 </head>
 <body>
 
@@ -29,10 +29,16 @@
       <ul>
         <li><a href="/">Beranda</a></li>
         <li><a href="/tentang.html">Tentang</a></li>
-        <li><a href="/layanan.html">Skema &amp; Layanan</a></li>
+        <li class="nav-item--has-sub">
+          <a href="/layanan.html">Skema &amp; Layanan <svg class="nav-link-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+          <ul class="nav-sub">
+            <li><a href="/layanan.html#skema">Skema Sertifikasi</a></li>
+            <li><a href="/layanan.html#pelatihan">Pelatihan Berbasis Kompetensi</a></li>
+          </ul>
+        </li>
         <li><a href="/alur.html">Alur Sertifikasi</a></li>
-        <li><a href="/faq.html">FAQ</a></li>
-        <li><a href="/kontak.html">Kontak</a></li>
+        <li><a href="/daftar-pelatihan.html">Daftar Pelatihan</a></li>
+        <li><a href="/materi-pelatihan.html">Materi Pelatihan</a></li>
       </ul>
     </nav>
   </div>
@@ -62,7 +68,7 @@
   </div>
 </footer>
 
-<script src="/assets/js/main.js?v=20261106b"></script>
-<script src="/assets/js/admin.js?v=20261106b"></script>
+<script src="/assets/js/main.js?v=20261112a"></script>
+<script src="/assets/js/admin.js?v=20261112a"></script>
 </body>
 </html>

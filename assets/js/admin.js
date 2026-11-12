@@ -47,6 +47,8 @@
     "tentang.html": "Tentang Kami",
     "layanan.html": "Skema & Layanan",
     "alur.html": "Alur Sertifikasi",
+    "daftar-pelatihan.html": "Daftar Pelatihan",
+    "materi-pelatihan.html": "Materi Pelatihan",
     "faq.html": "FAQ",
     "kontak.html": "Kontak",
     "404.html": "Halaman 404",
@@ -56,6 +58,8 @@
     "tentang.html",
     "layanan.html",
     "alur.html",
+    "daftar-pelatihan.html",
+    "materi-pelatihan.html",
     "faq.html",
     "kontak.html",
   ];
@@ -112,6 +116,11 @@
     { key: "whatsapp", label: "Nomor WhatsApp", type: "text", hint: "Format 62… tanpa + dan tanpa spasi." },
     { key: "email", label: "Email resmi", type: "email", hint: "Dipakai pada tautan email." },
     { key: "formEndpoint", label: "Endpoint formulir (opsional)", type: "url", hint: "Kosongkan untuk mode WhatsApp. Isi URL Formspree/Getform bila memakai email." },
+    { key: "driveFolderKkni", label: "Folder Drive — PBK KKNI", type: "url", hint: "Tautan folder Google Drive untuk program Metodologi Pelatihan KKNI." },
+    { key: "driveFolderPariwisata", label: "Folder Drive — Pariwisata", type: "url", hint: "Tautan folder Google Drive untuk program PBK Pariwisata." },
+    { key: "driveFolderGolf", label: "Folder Drive — Golf", type: "url", hint: "Tautan folder Google Drive untuk program PBK Golf." },
+    { key: "driveFolderDigital", label: "Folder Drive — Teknologi Digital", type: "url", hint: "Tautan folder Google Drive untuk program PBK Teknologi Digital." },
+    { key: "driveFolderKarir", label: "Folder Drive — Pengembangan Karir", type: "url", hint: "Tautan folder Google Drive untuk program Pengembangan Karir." },
   ];
 
   const ATTR_RULES = [

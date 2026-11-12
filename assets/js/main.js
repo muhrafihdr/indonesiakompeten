@@ -16,6 +16,14 @@ const SITE = {
   // Nama lembaga (dipakai untuk pesan otomatis)
   nama: "Indonesia Kompeten",
 
+  // Folder Google Drive untuk halaman Materi Pelatihan.
+  // Dapat diisi melalui Panel Admin > Pengaturan Website.
+  driveFolderKkni: "",
+  driveFolderPariwisata: "",
+  driveFolderGolf: "",
+  driveFolderDigital: "",
+  driveFolderKarir: "",
+
   /**
    * Endpoint formulir kontak (opsional).
    * - Biarkan "" (kosong) => formulir otomatis dikirim lewat WhatsApp.
@@ -36,7 +44,7 @@ try {
   if (raw) {
     const saved = JSON.parse(raw);
     if (saved && saved.site && typeof saved.site === "object") {
-      ["whatsapp", "email", "nama", "formEndpoint"].forEach((key) => {
+      ["whatsapp", "email", "nama", "formEndpoint", "driveFolderKkni", "driveFolderPariwisata", "driveFolderGolf", "driveFolderDigital", "driveFolderKarir"].forEach((key) => {
         if (Object.prototype.hasOwnProperty.call(saved.site, key)) {
           SITE[key] = String(saved.site[key] ?? "");
         }
@@ -94,7 +102,13 @@ try {
   function initActiveNav() {
     const file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
     $$("#siteNav a").forEach((a) => {
-      const href = (a.getAttribute("href") || "").split("/").pop().toLowerCase();
+      if (a.closest(".nav-sub")) return;
+      const href = (a.getAttribute("href") || "")
+        .split("#")[0]
+        .split("?")[0]
+        .split("/")
+        .pop()
+        .toLowerCase();
       if (href === file) {
         a.setAttribute("aria-current", "page");
       }
@@ -266,6 +280,99 @@ try {
     });
   }
 
+  /* ---------- 10. Slide show partner ---------- */
+  function initPartnerSlider() {
+    const slider = $("[data-partner-slider]");
+    if (!slider) return;
+
+    const track = $(".partner-slides", slider);
+    const slides = $$(".partner-slide", slider);
+    const dots = $$("[data-partner-dot]", slider);
+    const prev = $("[data-partner-prev]", slider);
+    const next = $("[data-partner-next]", slider);
+    const pause = $("[data-partner-pause]", slider);
+    if (!track || slides.length < 2) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let index = 0;
+    let timer = null;
+    let userPaused = false;
+    let hoverPaused = false;
+
+    const shouldPause = () => userPaused || hoverPaused;
+
+    const render = () => {
+      track.style.transform = `translateX(-${index * 100}%)`;
+      slides.forEach((slide, i) => {
+        const active = i === index;
+        slide.classList.toggle("is-active", active);
+        slide.setAttribute("aria-hidden", String(!active));
+        if ("inert" in slide) slide.inert = !active;
+      });
+      dots.forEach((dot, i) => {
+        const active = i === index;
+        dot.classList.toggle("is-active", active);
+        dot.setAttribute("aria-selected", String(active));
+      });
+    };
+
+    const go = (value) => {
+      index = (value + slides.length) % slides.length;
+      render();
+    };
+
+    const stop = () => {
+      if (timer) window.clearInterval(timer);
+      timer = null;
+    };
+
+    const start = () => {
+      stop();
+      if (reduce || shouldPause()) return;
+      timer = window.setInterval(() => {
+        if (!shouldPause() && !document.hidden) go(index + 1);
+      }, 6500);
+    };
+
+    if (prev) prev.addEventListener("click", () => { go(index - 1); start(); });
+    if (next) next.addEventListener("click", () => { go(index + 1); start(); });
+
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        go(Number(dot.getAttribute("data-partner-dot")) || 0);
+        start();
+      });
+    });
+
+    if (pause) {
+      pause.addEventListener("click", () => {
+        userPaused = !userPaused;
+        pause.setAttribute("aria-pressed", String(userPaused));
+        pause.setAttribute(
+          "aria-label",
+          userPaused ? "Lanjutkan slide otomatis" : "Jeda slide otomatis"
+        );
+        pause.classList.toggle("is-paused", userPaused);
+        start();
+      });
+    }
+
+    slider.addEventListener("mouseenter", () => { hoverPaused = true; stop(); });
+    slider.addEventListener("mouseleave", () => { hoverPaused = false; start(); });
+    slider.addEventListener("focusin", () => { hoverPaused = true; stop(); });
+    slider.addEventListener("focusout", (event) => {
+      if (slider.contains(event.relatedTarget)) return;
+      hoverPaused = false;
+      start();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) start();
+    });
+
+    render();
+    start();
+  }
+
   /* ---------- Jalankan ---------- */
   function init() {
     initNav();
@@ -277,6 +384,7 @@ try {
     initForm();
     initFilter();
     initYear();
+    initPartnerSlider();
   }
 
   // API kecil untuk Panel Admin (SSO) agar perubahan pengaturan situs
@@ -286,11 +394,12 @@ try {
   window.IK.defaults = SITE_DEFAULTS;
   window.IK.applySiteSettings = function (settings) {
     const merged = { ...SITE_DEFAULTS, ...(settings && typeof settings === "object" ? settings : {}) };
-    ["whatsapp", "email", "nama", "formEndpoint"].forEach((key) => {
+    ["whatsapp", "email", "nama", "formEndpoint", "driveFolderKkni", "driveFolderPariwisata", "driveFolderGolf", "driveFolderDigital", "driveFolderKarir"].forEach((key) => {
       SITE[key] = String(merged[key] ?? "");
     });
     initLinks();
     applyFormEndpoint();
+    document.dispatchEvent(new CustomEvent("ik:site-settings", { detail: { ...SITE } }));
   };
   window.IK.refreshLinks = initLinks;
 

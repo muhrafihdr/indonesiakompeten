@@ -16,8 +16,10 @@ sehingga dapat langsung di-hosting gratis di **GitHub Pages**.
 .
 ├── index.html              # Beranda
 ├── tentang.html            # Profil, visi misi, nilai, legalitas
-├── layanan.html            # Daftar skema + layanan + persyaratan
+├── layanan.html            # Daftar skema + layanan + persyaratan + PBK
 ├── alur.html               # Alur sertifikasi 8 tahap
+├── daftar-pelatihan.html   # Daftar program pelatihan + formulir pendaftaran
+├── materi-pelatihan.html   # Materi pelatihan via Google Drive
 ├── faq.html                # Pertanyaan umum
 ├── kontak.html             # Informasi kontak + formulir pendaftaran
 ├── 404.html                # Halaman error (otomatis dipakai GitHub Pages)
@@ -31,8 +33,11 @@ sehingga dapat langsung di-hosting gratis di **GitHub Pages**.
 └── assets/
     ├── css/style.css       # Seluruh tampilan (satu berkas)
     ├── js/main.js          # Seluruh interaksi + PENGATURAN PENTING
+    ├── js/pelatihan.js     # Data program pelatihan + formulir pendaftaran
+    ├── js/materi.js        # Integrasi materi Google Drive + penyaring
     ├── js/admin.js         # SSO Panel Admin (tersembunyi)
     ├── data/content.json   # Penyimpanan konten yang dipublikasikan
+    ├── data/materi.json    # Daftar materi yang dipublikasikan
     └── img/
         ├── logo.svg        # Logo lembaga
         ├── favicon.svg     # Ikon tab peramban
@@ -62,7 +67,60 @@ Lalu buka http://localhost:8000
 
 ---
 
-## 3. Yang WAJIB Diubah Sebelum Dipublikasikan
+## 3. Materi Pelatihan & Google Drive
+
+Halaman **Materi Pelatihan** (`materi-pelatihan.html`) memakai Google Drive sebagai
+penyimpanan materi. Tidak ada server upload di situs statis, sehingga alurnya:
+
+1. Pengelola membuat folder Google Drive untuk setiap program pelatihan.
+2. Buka halaman **Materi Pelatihan**, pilih program, lalu klik **Atur Folder** dan
+   tempelkan tautan folder Google Drive. Pengaturan ini tersimpan di peramban.
+   Cara yang lebih permanen: buka **Panel Admin → Pengaturan Website**, isi kolom
+   **Folder Drive** untuk setiap program, lalu publikasikan.
+3. Untuk membuat pengaturan berlaku bagi semua pengunjung, isi nilai default pada
+   `assets/js/materi.js` bagian `CONFIG.folders`:
+
+   ```js
+   folders: {
+     kkni: "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx",
+     pariwisata: "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx",
+     golf: "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx",
+     digital: "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx",
+     karir: "https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxx",
+   }
+   ```
+
+4. Klik **Unggah Materi ke Google Drive** untuk membuka folder Drive dan mengunggah
+   file (login dengan akun pengelola). Isi folder akan tampil pada embed Google Drive.
+5. Untuk menampilkan materi pada daftar materi, buka **Tambah / Tautkan Materi dari
+   Google Drive**, isi judul, program, level, dan tautan file Drive, lalu klik
+   **Tambah Materi**.
+6. Klik **Ekspor materi.json**, lalu unggah hasilnya ke `assets/data/materi.json`
+   di repositori agar daftar materi tampil untuk semua pengunjung. Format berkas:
+
+   ```json
+   {
+     "version": 1,
+     "updatedAt": "2026-11-12T00:00:00.000Z",
+     "materials": [
+       {
+         "title": "Modul Communication Skills",
+         "program": "karir",
+         "level": "Communication Skills",
+         "url": "https://drive.google.com/file/d/xxxxxxxx/view",
+         "description": "Modul pelatihan komunikasi profesional."
+       }
+     ]
+   }
+   ```
+
+> Atur izin folder Google Drive dengan benar. Gunakan **“Siapa saja yang memiliki
+> link”** untuk materi publik, atau batasi akses untuk materi internal. Jangan
+> mengunggah data pribadi peserta ke folder publik.
+
+---
+
+## 4. Yang WAJIB Diubah Sebelum Dipublikasikan
 
 Cari dan ganti semua teks di dalam tanda `[ ]`. Daftar lengkapnya:
 
@@ -75,6 +133,8 @@ Cari dan ganti semua teks di dalam tanda `[ ]`. Daftar lengkapnya:
 | `tentang.html` bagian **Legalitas** | Akta pendirian, SK Kemenkumham, NIB, NPWP, lisensi BNSP, ruang lingkup |
 | `layanan.html` | Pastikan daftar skema benar-benar tersedia/dilisensikan |
 | `kontak.html` | Jam layanan, peta Google Maps, nomor rekening resmi |
+| `assets/js/materi.js` | Folder Google Drive tiap program (bagian `CONFIG.folders`) |
+| `assets/data/materi.json` | Daftar materi yang dipublikasikan |
 
 > **Penting:** jangan mencantumkan nomor lisensi, akreditasi, atau skema yang
 > belum benar-benar dimiliki lembaga. Informasi yang tidak akurat pada situs
@@ -96,9 +156,13 @@ Semua warna diatur di satu tempat: bagian `:root` pada `assets/css/style.css`.
 
 ---
 
-## 4. Formulir Pendaftaran
+## 5. Formulir Pendaftaran
 
-Formulir di `kontak.html` bekerja **tanpa server** dengan dua pilihan:
+Formulir di `kontak.html` dan `daftar-pelatihan.html` bekerja **tanpa server**.
+Formulir pelatihan meminta nama, alamat, no. handphone, email, program, dan
+level/sub-program, lalu merangkai pesan WhatsApp otomatis.
+
+Formulir kontak menyediakan dua pilihan:
 
 1. **Mode WhatsApp (bawaan).** Saat peserta menekan kirim, jawaban mereka
    dirangkai otomatis menjadi pesan WhatsApp ke nomor lembaga.
@@ -115,7 +179,7 @@ Formulir di `kontak.html` bekerja **tanpa server** dengan dua pilihan:
 
 ---
 
-## 5. Publikasi ke GitHub Pages
+## 6. Publikasi ke GitHub Pages
 
 > **Status: sudah LIVE.** Website aktif penuh di **https://indonesiakompeten.web.id**
 > dengan HTTPS, redirect `www` → domain utama, dan redirect `http` → `https`.
@@ -134,7 +198,7 @@ Yang masih disarankan: **verifikasi kepemilikan domain** dengan record `TXT`
 
 ---
 
-## 6. Ringkasan Fitur
+## 7. Ringkasan Fitur
 
 - **Responsif** — nyaman dibaca di ponsel, tablet, dan desktop.
 - **Cepat** — tanpa framework, tanpa gambar berat, seluruh ilustrasi berupa SVG.
@@ -142,14 +206,17 @@ Yang masih disarankan: **verifikasi kepemilikan domain** dengan record `TXT`
   dan menghormati pengaturan *prefers-reduced-motion*.
 - **Ramah SEO** — judul & deskripsi unik per halaman, `sitemap.xml`,
   `robots.txt`, Open Graph, dan data terstruktur Schema.org.
-- **Navigasi mudah** — maksimal 6 menu, istilah sederhana, alur dijelaskan
-  bertahap.
+- **Navigasi pelatihan** — Beranda, Tentang, Skema & Layanan (dropdown PBK),
+  Alur, Daftar Pelatihan, dan Materi Pelatihan.
 - **Penyaring skema** — peserta dapat menyaring skema berdasarkan bidang.
+- **Pendaftaran pelatihan** — formulir nama, alamat, no. handphone, email, program, dan level/sub-program.
+- **Materi Google Drive** — folder per program, embed daftar file, tombol unggah, dan pengelola tautan materi.
+- **Slide show partner** — menampilkan Partner LSP dan Partner Pelatihan di beranda.
 - **Tombol WhatsApp mengambang** — kanal komunikasi yang paling familiar.
 
 ---
 
-## 7. Panel Admin (SSO)
+## 8. Panel Admin (SSO)
 
 Panel admin bersifat **tersembunyi** dan tidak muncul di menu publik. Kredensial
 login diberikan kepada pengelola situs. Setelah login, Anda langsung masuk ke
@@ -189,6 +256,6 @@ SEO, warna, dan pengaturan kontak.
 
 ---
 
-## 8. Lisensi & Kepemilikan
+## 9. Lisensi & Kepemilikan
 
 Seluruh isi dan kode website ini milik **Indonesia Kompeten**.

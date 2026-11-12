@@ -6,7 +6,7 @@
 
 <title>Indonesia Kompeten — Portal Terintegrasi Wujudkan SDM Indonesia Kompeten</title>
 <meta name="description" content="Indonesia Kompeten adalah portal terintegrasi untuk mewujudkan SDM Indonesia yang kompeten dan membantu tenaga kerja Indonesia mendapatkan sertifikat kompetensi melalui proses asesmen yang valid, reliabel, fleksibel, dan adil.">
-<meta name="keywords" content="sertifikasi kompetensi, portal terintegrasi, SDM Indonesia kompeten, sertifikat profesi, asesmen kompetensi, uji kompetensi, Indonesia Kompeten">
+<meta name="keywords" content="sertifikasi kompetensi, pelatihan berbasis kompetensi, PBK, materi pelatihan, Google Drive, portal terintegrasi, SDM Indonesia kompeten, sertifikat profesi, asesmen kompetensi, uji kompetensi, Indonesia Kompeten">
 <meta name="author" content="Indonesia Kompeten">
 <link rel="canonical" href="https://indonesiakompeten.web.id/">
 <meta name="theme-color" content="#0B2A4A">
@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="assets/css/style.css?v=20261106b">
+<link rel="stylesheet" href="assets/css/style.css?v=20261112a">
 
 <!-- Data terstruktur untuk mesin pencari -->
 <script type="application/ld+json">
@@ -81,14 +81,18 @@
       <ul>
         <li><a href="./">Beranda</a></li>
         <li><a href="tentang.html">Tentang</a></li>
-        <li><a href="layanan.html">Skema &amp; Layanan</a></li>
+        <li class="nav-item--has-sub">
+          <a href="layanan.html">Skema &amp; Layanan <svg class="nav-link-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+          <ul class="nav-sub">
+            <li><a href="layanan.html#skema">Skema Sertifikasi</a></li>
+            <li><a href="layanan.html#pelatihan">Pelatihan Berbasis Kompetensi</a></li>
+          </ul>
+        </li>
         <li><a href="alur.html">Alur Sertifikasi</a></li>
-        <li><a href="faq.html">FAQ</a></li>
-        <li><a href="kontak.html">Kontak</a></li>
+        <li><a href="daftar-pelatihan.html">Daftar Pelatihan</a></li>
+        <li><a href="materi-pelatihan.html">Materi Pelatihan</a></li>
       </ul>
-      <div class="nav-cta">
-        <a class="btn btn-primary btn-sm" href="kontak.html#formulir">Daftar Sertifikasi</a>
-      </div>
+      <div class="nav-cta"><a class="btn btn-primary btn-sm" href="daftar-pelatihan.html#formulir">Daftar Pelatihan</a></div>
     </nav>
   </div>
 </header>
@@ -102,17 +106,17 @@
         <span class="eyebrow">Portal Terintegrasi Wujudkan SDM Indonesia Kompeten</span>
         <h1>Kompetensi Anda, <span class="hl">Diakui Secara Resmi</span></h1>
         <p class="lead">
-          Indonesia Kompeten membantu Anda membuktikan keahlian melalui proses asesmen
-          yang jelas, transparan, dan mudah dipahami — dari pendaftaran sampai
-          sertifikat diterima.
+          Tingkatkan potensi diri Anda melalui pelatihan berbasis kompetensi, lalu
+          buktikan keahlian dengan proses asesmen yang jelas, transparan, dan mudah
+          dipahami — dari pendaftaran sampai sertifikat diterima.
         </p>
 
         <div class="btn-row">
-          <a class="btn btn-primary" href="kontak.html#formulir">
-            Daftar Sertifikasi
+          <a class="btn btn-primary" href="daftar-pelatihan.html#formulir">
+            Daftar Pelatihan
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
-          <a class="btn btn-ghost" href="alur.html">Lihat Alur Sertifikasi</a>
+          <a class="btn btn-ghost" href="layanan.html">Lihat Skema &amp; Layanan</a>
         </div>
 
         <ul class="hero-trust">
@@ -139,6 +143,100 @@
             <strong>Sertifikat Kompetensi</strong>
             <small>Diterbitkan setelah asesmen dinyatakan kompeten</small>
           </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PARTNER / SLIDE SHOW ==================== -->
+  <section class="section" id="partner">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">Jaringan Mitra</span>
+        <h2>Partner LSP &amp; Partner Pelatihan</h2>
+        <p>
+          Kami berkolaborasi dengan lembaga sertifikasi profesi dan mitra pelatihan
+          untuk memperluas akses pelatihan serta uji kompetensi yang bermutu.
+        </p>
+      </div>
+
+      <div class="partner-slider reveal" data-partner-slider aria-roledescription="carousel" aria-label="Partner Indonesia Kompeten">
+        <div class="partner-viewport">
+          <div class="partner-slides">
+            <div class="partner-slide is-active" data-partner-slide="0" aria-hidden="false">
+              <h3>Partner LSP</h3>
+              <div class="partner-grid">
+                <a class="partner-card" href="https://lspinten.id" target="_blank" rel="noopener">
+                  <span class="partner-logo partner-logo--blue" aria-hidden="true">LSP<br>INTEN</span>
+                  <span class="partner-info">
+                    <strong>LSP Instruktur dan Tenaga Latih Kompeten</strong>
+                    <span>lspinten.id</span>
+                  </span>
+                </a>
+
+                <a class="partner-card" href="https://lsppatraindo.id" target="_blank" rel="noopener">
+                  <span class="partner-logo partner-logo--green" aria-hidden="true">LSP<br>PATRA</span>
+                  <span class="partner-info">
+                    <strong>LSP Pariwisata Citra Indonesia</strong>
+                    <span>lsppatraindo.id</span>
+                  </span>
+                </a>
+
+                <div class="partner-card partner-card--static">
+                  <span class="partner-logo partner-logo--gold" aria-hidden="true">LSP<br>TD</span>
+                  <span class="partner-info">
+                    <strong>LSP Teknologi Digital</strong>
+                    <span class="partner-soon">Website segera hadir</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="partner-slide" data-partner-slide="1" aria-hidden="true">
+              <h3>Partner Pelatihan</h3>
+              <div class="partner-grid">
+                <div class="partner-card partner-card--static">
+                  <span class="partner-logo partner-logo--red" aria-hidden="true">RM</span>
+                  <span class="partner-info">
+                    <strong>Raff Media</strong>
+                    <span>Mitra pelatihan</span>
+                  </span>
+                </div>
+
+                <div class="partner-card partner-card--static">
+                  <span class="partner-logo partner-logo--navy" aria-hidden="true">TM</span>
+                  <span class="partner-info">
+                    <strong>Techmate</strong>
+                    <span>Mitra pelatihan</span>
+                  </span>
+                </div>
+
+                <div class="partner-card partner-card--static">
+                  <span class="partner-logo partner-logo--slate" aria-hidden="true">SN</span>
+                  <span class="partner-info">
+                    <strong>Sinersia</strong>
+                    <span>Mitra pelatihan</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="partner-controls">
+          <button class="partner-btn" type="button" data-partner-prev aria-label="Slide partner sebelumnya">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+          </button>
+          <div class="partner-dots" role="tablist" aria-label="Pilih slide partner">
+            <button class="partner-dot is-active" type="button" role="tab" data-partner-dot="0" aria-selected="true" aria-label="Partner LSP"></button>
+            <button class="partner-dot" type="button" role="tab" data-partner-dot="1" aria-selected="false" aria-label="Partner Pelatihan"></button>
+          </div>
+          <button class="partner-btn" type="button" data-partner-next aria-label="Slide partner berikutnya">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+          <button class="partner-btn partner-pause" type="button" data-partner-pause aria-pressed="false" aria-label="Jeda slide otomatis">
+            <span aria-hidden="true">❚❚</span>
+          </button>
         </div>
       </div>
     </div>
@@ -259,6 +357,56 @@
 
       <div class="text-center" style="margin-top:34px">
         <a class="btn btn-ghost" href="layanan.html">Lihat Semua Skema &amp; Layanan</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PELATIHAN ==================== -->
+  <section class="section" id="pelatihan">
+    <div class="container split">
+      <div class="reveal">
+        <span class="eyebrow">Sebelum Uji Kompetensi</span>
+        <h2>Wajib Ikuti Pelatihan Berbasis Kompetensi</h2>
+        <p>
+          Sebelum mengikuti uji kompetensi, Anda diwajibkan untuk mengikuti
+          pelatihan baik secara online maupun offline. Pelatihan membantu Anda
+          memahami standar, menyiapkan bukti, dan meningkatkan peluang dinyatakan
+          kompeten.
+        </p>
+        <ul class="card-list">
+          <li>PBK Metodologi Pelatihan KKNI — Instruktur Level 3 s.d. 6</li>
+          <li>PBK Bidang Pariwisata — Tour Guide, Tour Planner, Manajer Humas Destinasi</li>
+          <li>PBK Bidang Golf — Golfing Assistant Caddy, Porter, Starter and Marshall, Golf Operation Manager</li>
+          <li>PBK Bidang Teknologi Digital — Digital Marketing, Copywriting</li>
+          <li>Pengembangan Karir — Communication Skills, Upgrade Your Skills</li>
+        </ul>
+        <div class="btn-row" style="margin-top:22px">
+          <a class="btn btn-primary" href="daftar-pelatihan.html">Daftar Pelatihan</a>
+          <a class="btn btn-ghost" href="materi-pelatihan.html">Akses Materi</a>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <div class="card" style="padding:30px">
+          <div class="card-icon card-icon--green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4Z"/><path d="M8 9h8M8 13h5"/><path d="m15 17 2 2 3-3"/></svg>
+          </div>
+          <h3>Cara Memulai Pelatihan</h3>
+          <ol class="steps" style="margin-top:16px">
+            <li class="step" style="padding:16px;grid-template-columns:44px 1fr">
+              <span class="step-num" style="width:40px;height:40px;border-radius:12px;font-size:.95rem" aria-hidden="true"></span>
+              <div><h3 style="font-size:1rem;margin-bottom:2px">Pilih program</h3><p style="margin:0;font-size:.88rem">Tentukan bidang dan level/sub-program.</p></div>
+            </li>
+            <li class="step" style="padding:16px;grid-template-columns:44px 1fr">
+              <span class="step-num" style="width:40px;height:40px;border-radius:12px;font-size:.95rem" aria-hidden="true"></span>
+              <div><h3 style="font-size:1rem;margin-bottom:2px">Akses materi</h3><p style="margin:0;font-size:.88rem">Pelajari modul melalui Google Drive.</p></div>
+            </li>
+            <li class="step" style="padding:16px;grid-template-columns:44px 1fr">
+              <span class="step-num" style="width:40px;height:40px;border-radius:12px;font-size:.95rem" aria-hidden="true"></span>
+              <div><h3 style="font-size:1rem;margin-bottom:2px">Ikuti pelatihan</h3><p style="margin:0;font-size:.88rem">Online atau offline, lalu lanjut uji kompetensi.</p></div>
+            </li>
+          </ol>
+        </div>
       </div>
     </div>
   </section>
@@ -462,24 +610,27 @@
           <li><a href="tentang.html">Tentang Kami</a></li>
           <li><a href="layanan.html">Skema &amp; Layanan</a></li>
           <li><a href="alur.html">Alur Sertifikasi</a></li>
-          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="daftar-pelatihan.html">Daftar Pelatihan</a></li>
+          <li><a href="materi-pelatihan.html">Materi Pelatihan</a></li>
         </ul>
       </div>
 
       <div>
         <h4>Layanan</h4>
         <ul>
+          <li><a href="layanan.html#pelatihan">Pelatihan Berbasis Kompetensi</a></li>
           <li><a href="layanan.html#skema">Sertifikasi Kompetensi</a></li>
           <li><a href="layanan.html#asesmen-mandiri">Asesmen Mandiri</a></li>
           <li><a href="layanan.html#tuk">Tempat Uji Kompetensi</a></li>
           <li><a href="layanan.html#asesor">Pelatihan Asesor</a></li>
-          <li><a href="kontak.html">Pendaftaran</a></li>
         </ul>
       </div>
 
       <div>
-        <h4>Kontak</h4>
+        <h4>Bantuan &amp; Kontak</h4>
         <ul>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="kontak.html">Kontak &amp; Pendaftaran</a></li>
           <li>Jl Wologito Setapak 78<br>Kembangarum, Semarang Barat 50148</li>
           <li><a data-wa href="https://wa.me/6287700558300">WhatsApp: +62 877-0055-8300</a></li>
           <li><a data-mailto="Pertanyaan Sertifikasi" href="mailto:info@indonesiakompeten.web.id">info@indonesiakompeten.web.id</a></li>
@@ -504,7 +655,7 @@
   <span>Chat WhatsApp</span>
 </a>
 
-<script src="assets/js/main.js?v=20261106b"></script>
-<script src="assets/js/admin.js?v=20261106b"></script>
+<script src="assets/js/main.js?v=20261112a"></script>
+<script src="assets/js/admin.js?v=20261112a"></script>
 </body>
 </html>

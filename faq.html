@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20261106b">
+<link rel="stylesheet" href="assets/css/style.css?v=20261112a">
 
 <script type="application/ld+json">
 {
@@ -84,12 +84,18 @@
       <ul>
         <li><a href="./">Beranda</a></li>
         <li><a href="tentang.html">Tentang</a></li>
-        <li><a href="layanan.html">Skema &amp; Layanan</a></li>
+        <li class="nav-item--has-sub">
+          <a href="layanan.html">Skema &amp; Layanan <svg class="nav-link-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+          <ul class="nav-sub">
+            <li><a href="layanan.html#skema">Skema Sertifikasi</a></li>
+            <li><a href="layanan.html#pelatihan">Pelatihan Berbasis Kompetensi</a></li>
+          </ul>
+        </li>
         <li><a href="alur.html">Alur Sertifikasi</a></li>
-        <li><a href="faq.html">FAQ</a></li>
-        <li><a href="kontak.html">Kontak</a></li>
+        <li><a href="daftar-pelatihan.html">Daftar Pelatihan</a></li>
+        <li><a href="materi-pelatihan.html">Materi Pelatihan</a></li>
       </ul>
-      <div class="nav-cta"><a class="btn btn-primary btn-sm" href="kontak.html#formulir">Daftar Sertifikasi</a></div>
+      <div class="nav-cta"><a class="btn btn-primary btn-sm" href="daftar-pelatihan.html#formulir">Daftar Pelatihan</a></div>
     </nav>
   </div>
 </header>
@@ -395,24 +401,27 @@
           <li><a href="tentang.html">Tentang Kami</a></li>
           <li><a href="layanan.html">Skema &amp; Layanan</a></li>
           <li><a href="alur.html">Alur Sertifikasi</a></li>
-          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="daftar-pelatihan.html">Daftar Pelatihan</a></li>
+          <li><a href="materi-pelatihan.html">Materi Pelatihan</a></li>
         </ul>
       </div>
 
       <div>
         <h4>Layanan</h4>
         <ul>
+          <li><a href="layanan.html#pelatihan">Pelatihan Berbasis Kompetensi</a></li>
           <li><a href="layanan.html#skema">Sertifikasi Kompetensi</a></li>
           <li><a href="layanan.html#asesmen-mandiri">Asesmen Mandiri</a></li>
           <li><a href="layanan.html#tuk">Tempat Uji Kompetensi</a></li>
           <li><a href="layanan.html#asesor">Pelatihan Asesor</a></li>
-          <li><a href="kontak.html">Pendaftaran</a></li>
         </ul>
       </div>
 
       <div>
-        <h4>Kontak</h4>
+        <h4>Bantuan &amp; Kontak</h4>
         <ul>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="kontak.html">Kontak &amp; Pendaftaran</a></li>
           <li>Jl Wologito Setapak 78<br>Kembangarum, Semarang Barat 50148</li>
           <li><a data-wa href="https://wa.me/6287700558300">WhatsApp: +62 877-0055-8300</a></li>
           <li><a data-mailto="Pertanyaan Sertifikasi" href="mailto:info@indonesiakompeten.web.id">info@indonesiakompeten.web.id</a></li>
@@ -436,7 +445,7 @@
   <span>Chat WhatsApp</span>
 </a>
 
-<script src="assets/js/main.js?v=20261106b"></script>
-<script src="assets/js/admin.js?v=20261106b"></script>
+<script src="assets/js/main.js?v=20261112a"></script>
+<script src="assets/js/admin.js?v=20261112a"></script>
 </body>
 </html>
